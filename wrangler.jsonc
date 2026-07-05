@@ -2,11 +2,21 @@
   // Must match the existing Worker name in the Cloudflare dashboard
   "name": "soft-snow-3498",
   "compatibility_date": "2026-07-05",
+  "main": "src/index.js",
   "assets": {
-    "directory": "./public"
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
   },
   "routes": [
     { "pattern": "parals.net", "custom_domain": true },
     { "pattern": "www.parals.net", "custom_domain": true }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "parals-auth",
+      "database_id": "2c4a4ad9-b9f5-44e5-af7e-7e5721a4806c"
+    }
   ]
 }

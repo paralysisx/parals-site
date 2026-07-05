@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in — parals.net</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #121a30;
+      --border: #24304f;
+      --text: #e6ebf5;
+      --muted: #8b96b3;
+      --accent: #6ea8fe;
+      --accent-strong: #3d7bfd;
+      --error: #f87171;
+      --ok: #4ade80;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(1200px 600px at 80% -10%, #1b2a55 0%, transparent 60%),
+        radial-gradient(900px 500px at -10% 110%, #14224a 0%, transparent 55%),
+        var(--bg);
+      color: var(--text);
+      padding: 1.5rem;
+    }
+    .card {
+      width: 100%;
+      max-width: 24rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.25rem 2rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+    }
+    h1 { margin: 0 0 1.5rem; font-size: 1.45rem; letter-spacing: -0.01em; }
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      background: #0d1428;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 1.5rem;
+    }
+    .tabs button {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-weight: 500;
+      padding: 0.55rem;
+      border-radius: 9px;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .tabs button.active { background: var(--card); color: var(--text); border: 1px solid var(--border); }
+    label { display: block; font-size: 0.85rem; color: var(--muted); margin: 0 0 0.35rem; }
+    input {
+      width: 100%;
+      padding: 0.7rem 0.85rem;
+      margin-bottom: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #0d1428;
+      color: var(--text);
+      font: inherit;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+    input:focus { border-color: var(--accent); }
+    .submit {
+      width: 100%;
+      padding: 0.75rem;
+      border: 0;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #fff;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: filter 0.15s ease;
+    }
+    .submit:hover { filter: brightness(1.1); }
+    .submit:disabled { filter: grayscale(0.6); cursor: wait; }
+    .msg { min-height: 1.4rem; font-size: 0.875rem; margin: 0.75rem 0 0; text-align: center; }
+    .msg.error { color: var(--error); }
+    .msg.ok { color: var(--ok); }
+    .back { display: block; margin-top: 1.25rem; text-align: center; font-size: 0.85rem; color: var(--muted); }
+    .back a { color: var(--muted); }
+    /* signed-in view */
+    #signedin { display: none; text-align: center; }
+    #signedin .avatar {
+      width: 64px; height: 64px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.75rem; margin: 0 auto 1rem;
+      background: linear-gradient(135deg, #2b4a8f, #16305f);
+      border: 1px solid var(--border);
+    }
+    #signedin p { color: var(--muted); margin: 0.25rem 0 1.5rem; }
+    #signedin .username { color: var(--text); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div id="authforms">
+      <h1 id="title">Welcome back</h1>
+      <div class="tabs">
+        <button id="tab-signin" class="active" type="button">Sign in</button>
+        <button id="tab-signup" type="button">Create account</button>
+      </div>
+      <form id="form">
+        <label for="username">Username</label>
+        <input id="username" name="username" autocomplete="username" required minlength="3" maxlength="32">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required minlength="8">
+        <button class="submit" id="submit" type="submit">Sign in</button>
+        <p class="msg" id="msg"></p>
+      </form>
+    </div>
+
+    <div id="signedin">
+      <div class="avatar">✅</div>
+      <h1>You're signed in</h1>
+      <p>Signed in as <span class="username" id="whoami"></span> — this session is stored in the database and survives refreshes.</p>
+      <button class="submit" id="signout" type="button">Sign out</button>
+    </div>
+
+    <span class="back"><a href="/">← back to parals.net</a></span>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let mode = "signin";
+
+    function setMode(m) {
+      mode = m;
+      $("tab-signin").classList.toggle("active", m === "signin");
+      $("tab-signup").classList.toggle("active", m === "signup");
+      $("title").textContent = m === "signin" ? "Welcome back" : "Create your account";
+      $("submit").textContent = m === "signin" ? "Sign in" : "Create account";
+      $("password").autocomplete = m === "signin" ? "current-password" : "new-password";
+      setMsg("");
+    }
+    $("tab-signin").onclick = () => setMode("signin");
+    $("tab-signup").onclick = () => setMode("signup");
+
+    function setMsg(text, cls) {
+      const el = $("msg");
+      el.textContent = text;
+      el.className = "msg" + (cls ? " " + cls : "");
+    }
+
+    function showSignedIn(username) {
+      $("authforms").style.display = "none";
+      $("signedin").style.display = "block";
+      $("whoami").textContent = username;
+    }
+    function showForms() {
+      $("authforms").style.display = "block";
+      $("signedin").style.display = "none";
+      $("form").reset();
+      setMsg("");
+    }
+
+    $("form").onsubmit = async (e) => {
+      e.preventDefault();
+      const btn = $("submit");
+      btn.disabled = true;
+      setMsg(mode === "signin" ? "Signing in…" : "Creating account…");
+      try {
+        const res = await fetch(mode === "signin" ? "/api/login" : "/api/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: $("username").value,
+            password: $("password").value,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setMsg(data.error || "Something went wrong", "error");
+        } else {
+          setMsg(data.created ? "Account created!" : "Signed in!", "ok");
+          showSignedIn(data.username);
+        }
+      } catch {
+        setMsg("Network error — try again", "error");
+      } finally {
+        btn.disabled = false;
+      }
+    };
+
+    $("signout").onclick = async () => {
+      await fetch("/api/logout", { method: "POST" });
+      showForms();
+    };
+
+    // On load: restore session if the cookie is still valid
+    fetch("/api/me").then(async (res) => {
+      if (res.ok) {
+        const data = await res.json();
+        showSignedIn(data.username);
+      }
+    }).catch(() => {});
+  </script>
+</body>
+</html>
