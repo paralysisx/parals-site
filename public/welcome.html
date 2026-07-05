@@ -29,6 +29,13 @@
       padding: 1.5rem;
       overflow: hidden;
     }
+    .px {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      will-change: transform;
+    }
     .grid-layer {
       position: fixed;
       inset: -60px;
@@ -154,10 +161,12 @@
   </style>
 </head>
 <body>
-  <div class="grid-layer"></div>
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-  <div class="stars" id="stars"></div>
+  <div class="px" data-depth="10"><div class="grid-layer"></div></div>
+  <div class="px" data-depth="22">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+  <div class="px" data-depth="42"><div class="stars" id="stars"></div></div>
 
   <main class="card" id="card">
     <div class="brand-row">
@@ -194,7 +203,7 @@
     // Floating background particles
     (() => {
       const box = $("stars");
-      for (let i = 0; i < 34; i++) {
+      for (let i = 0; i < 70; i++) {
         const s = document.createElement("span");
         const size = 1.5 + Math.random() * 2.2;
         const dur = 14 + Math.random() * 22;
@@ -207,6 +216,27 @@
         s.style.animationDelay = -(Math.random() * dur) + "s";
         box.appendChild(s);
       }
+    })();
+
+    // Mouse parallax: each layer drifts opposite the cursor by its depth
+    (() => {
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const layers = [...document.querySelectorAll(".px")].map((el) => ({
+        el, depth: parseFloat(el.dataset.depth) || 0,
+      }));
+      let tx = 0, ty = 0, cx = 0, cy = 0;
+      addEventListener("mousemove", (e) => {
+        tx = (e.clientX / innerWidth) * 2 - 1;
+        ty = (e.clientY / innerHeight) * 2 - 1;
+      });
+      (function tick() {
+        cx += (tx - cx) * 0.06;
+        cy += (ty - cy) * 0.06;
+        for (const { el, depth } of layers) {
+          el.style.transform = `translate3d(${(-cx * depth).toFixed(1)}px, ${(-cy * depth).toFixed(1)}px, 0)`;
+        }
+        requestAnimationFrame(tick);
+      })();
     })();
 
     fetch("/api/me").then(async (res) => {
