@@ -29,6 +29,41 @@
       padding: 1.5rem;
       overflow: hidden;
     }
+    .grid-layer {
+      position: fixed;
+      inset: -60px;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(120, 145, 220, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(120, 145, 220, 0.055) 1px, transparent 1px);
+      background-size: 54px 54px;
+      -webkit-mask-image: radial-gradient(ellipse 75% 65% at 50% 45%, black 25%, transparent 75%);
+      mask-image: radial-gradient(ellipse 75% 65% at 50% 45%, black 25%, transparent 75%);
+      animation: grid-pan 40s linear infinite;
+    }
+    @keyframes grid-pan { to { transform: translate(54px, 54px); } }
+
+    .stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    .star {
+      position: absolute;
+      bottom: -6px;
+      border-radius: 50%;
+      background: #aef0d8;
+      opacity: 0;
+      animation: rise linear infinite;
+    }
+    @keyframes rise {
+      0%   { transform: translateY(0) translateX(0); opacity: 0; }
+      12%  { opacity: var(--o); }
+      88%  { opacity: var(--o); }
+      100% { transform: translateY(-108vh) translateX(var(--sway)); opacity: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .grid-layer, .star, .orb { animation: none; }
+    }
+
     .orb {
       position: fixed;
       border-radius: 50%;
@@ -119,8 +154,10 @@
   </style>
 </head>
 <body>
+  <div class="grid-layer"></div>
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
+  <div class="stars" id="stars"></div>
 
   <main class="card" id="card">
     <div class="brand-row">
@@ -153,6 +190,24 @@
 
   <script>
     const $ = (id) => document.getElementById(id);
+
+    // Floating background particles
+    (() => {
+      const box = $("stars");
+      for (let i = 0; i < 34; i++) {
+        const s = document.createElement("span");
+        const size = 1.5 + Math.random() * 2.2;
+        const dur = 14 + Math.random() * 22;
+        s.className = "star";
+        s.style.left = Math.random() * 100 + "%";
+        s.style.width = s.style.height = size + "px";
+        s.style.setProperty("--o", (0.12 + Math.random() * 0.35).toFixed(2));
+        s.style.setProperty("--sway", (Math.random() * 120 - 60).toFixed(0) + "px");
+        s.style.animationDuration = dur + "s";
+        s.style.animationDelay = -(Math.random() * dur) + "s";
+        box.appendChild(s);
+      }
+    })();
 
     fetch("/api/me").then(async (res) => {
       if (!res.ok) { location.replace("/"); return; }
