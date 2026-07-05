@@ -86,17 +86,20 @@ async function me(request, env) {
   if (!token) return json({ error: "Not signed in" }, 401);
 
   const row = await env.DB.prepare(
-    `SELECT u.username, s.expires_at FROM sessions s
+    `SELECT u.username, u.created_at, s.expires_at FROM sessions s
      JOIN users u ON u.id = s.user_id WHERE s.token = ?`
   ).bind(token).first();
 
   if (!row || row.expires_at < Date.now()) {
     return json({ error: "Session expired" }, 401, clearCookieHeader());
   }
-  return json({ username: row.username });
+  return json({ username: row.username, created_at: row.created_at });
 }
 
 async function createSession(env, userId, payload) {
+  // Opportunistic cleanup so expired sessions don't pile up
+  await env.DB.prepare("DELETE FROM sessions WHERE expires_at < ?").bind(Date.now()).run();
+
   const token = randomHex(32);
   const expiresAt = Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000;
   await env.DB.prepare(

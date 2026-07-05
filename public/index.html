@@ -3,18 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dimitris — parals.net</title>
-  <meta name="description" content="Personal page of Dimitris">
+  <title>parals — sign in</title>
   <style>
     :root {
-      --bg: #0b1020;
-      --card: #121a30;
-      --border: #24304f;
-      --text: #e6ebf5;
-      --muted: #8b96b3;
-      --accent: #6ea8fe;
+      --bg: #070b18;
+      --card: rgba(19, 26, 48, 0.72);
+      --border: rgba(110, 130, 190, 0.22);
+      --text: #eaeefb;
+      --muted: #8d97b5;
+      --accent1: #7c5cff;
+      --accent2: #37a5ff;
+      --accent3: #2dd4bf;
+      --error: #fb7185;
+      --ok: #34d399;
     }
     * { box-sizing: border-box; }
+    html, body { height: 100%; }
     body {
       margin: 0;
       min-height: 100vh;
@@ -22,80 +26,369 @@
       align-items: center;
       justify-content: center;
       font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-      background:
-        radial-gradient(1200px 600px at 80% -10%, #1b2a55 0%, transparent 60%),
-        radial-gradient(900px 500px at -10% 110%, #14224a 0%, transparent 55%),
-        var(--bg);
+      background: var(--bg);
       color: var(--text);
       padding: 1.5rem;
+      overflow: hidden;
     }
-    .card {
-      width: 100%;
-      max-width: 26rem;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 2.5rem 2.25rem;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
-    }
-    .avatar {
-      width: 64px;
-      height: 64px;
+
+    /* ---- animated background orbs ---- */
+    .orb {
+      position: fixed;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.75rem;
-      background: linear-gradient(135deg, #2b4a8f, #16305f);
-      border: 1px solid var(--border);
-      margin-bottom: 1.25rem;
+      filter: blur(90px);
+      opacity: 0.5;
+      pointer-events: none;
+      z-index: 0;
     }
-    h1 { margin: 0 0 0.35rem; font-size: 1.7rem; letter-spacing: -0.01em; }
-    .tag { margin: 0; color: var(--muted); line-height: 1.6; }
-    .divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
-    .links { display: flex; flex-direction: column; gap: 0.6rem; }
-    .links a {
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-      padding: 0.7rem 0.9rem;
+    .orb-1 {
+      width: 480px; height: 480px;
+      background: #3b2d8f;
+      top: -140px; left: -120px;
+      animation: drift1 18s ease-in-out infinite alternate;
+    }
+    .orb-2 {
+      width: 420px; height: 420px;
+      background: #123f70;
+      bottom: -160px; right: -100px;
+      animation: drift2 22s ease-in-out infinite alternate;
+    }
+    .orb-3 {
+      width: 300px; height: 300px;
+      background: #0f4f4a;
+      top: 55%; left: 12%;
+      animation: drift3 26s ease-in-out infinite alternate;
+    }
+    @keyframes drift1 { to { transform: translate(120px, 90px) scale(1.15); } }
+    @keyframes drift2 { to { transform: translate(-100px, -70px) scale(1.1); } }
+    @keyframes drift3 { to { transform: translate(90px, -110px) scale(0.9); } }
+
+    /* ---- card ---- */
+    .card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 25rem;
+      background: var(--card);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 2.5rem 2.25rem 2.25rem;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+      animation: card-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    @keyframes card-in {
+      from { opacity: 0; transform: translateY(28px) scale(0.97); }
+      to   { opacity: 1; transform: none; }
+    }
+    .card.shake { animation: shake 0.45s ease; }
+    @keyframes shake {
+      20% { transform: translateX(-9px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(3px); }
+    }
+
+    .brand {
+      margin: 0 0 0.4rem;
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent3));
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shine 6s linear infinite;
+    }
+    @keyframes shine { to { background-position: 200% center; } }
+    .sub { margin: 0 0 1.75rem; color: var(--muted); font-size: 0.925rem; }
+
+    /* ---- tabs with sliding pill ---- */
+    .tabs {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: rgba(9, 13, 28, 0.8);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 4px;
+      margin-bottom: 1.6rem;
+    }
+    .tabs .pill {
+      position: absolute;
+      top: 4px; bottom: 4px; left: 4px;
+      width: calc(50% - 4px);
+      border-radius: 11px;
+      background: linear-gradient(135deg, rgba(124, 92, 255, 0.35), rgba(55, 165, 255, 0.35));
+      border: 1px solid rgba(124, 92, 255, 0.5);
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .tabs.signup .pill { transform: translateX(100%); }
+    .tabs button {
+      position: relative;
+      z-index: 1;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-weight: 600;
+      font-size: 0.925rem;
+      padding: 0.6rem;
+      cursor: pointer;
+      transition: color 0.25s ease;
+    }
+    .tabs button.active { color: var(--text); }
+
+    /* ---- sliding panels ---- */
+    .panels { position: relative; overflow: hidden; transition: height 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+    .panel {
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 100%;
+      transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .panel.off-left  { opacity: 0; transform: translateX(-36px); pointer-events: none; }
+    .panel.off-right { opacity: 0; transform: translateX(36px);  pointer-events: none; }
+
+    /* ---- floating-label inputs ---- */
+    .field { position: relative; margin-bottom: 1.05rem; }
+    .field input {
+      width: 100%;
+      padding: 1.15rem 0.95rem 0.5rem;
       border: 1px solid var(--border);
       border-radius: 12px;
+      background: rgba(9, 13, 28, 0.65);
       color: var(--text);
-      text-decoration: none;
-      transition: border-color 0.15s ease, background 0.15s ease;
+      font: inherit;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
-    .links a:hover { border-color: var(--accent); background: rgba(110, 168, 254, 0.06); }
-    .links .label { font-weight: 500; }
-    .links .sub { margin-left: auto; color: var(--muted); font-size: 0.85rem; }
-    footer {
-      margin-top: 1.75rem;
+    .field input:focus {
+      border-color: var(--accent2);
+      box-shadow: 0 0 0 3px rgba(55, 165, 255, 0.15);
+    }
+    .field label {
+      position: absolute;
+      left: 0.95rem;
+      top: 50%;
+      transform: translateY(-50%);
       color: var(--muted);
-      font-size: 0.8rem;
-      text-align: center;
+      font-size: 0.95rem;
+      pointer-events: none;
+      transition: all 0.18s ease;
     }
-    footer a { color: var(--muted); }
+    .field input:focus + label,
+    .field input:not(:placeholder-shown) + label {
+      top: 0.62rem;
+      transform: none;
+      font-size: 0.68rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent2);
+    }
+
+    /* ---- submit button ---- */
+    .submit {
+      position: relative;
+      width: 100%;
+      padding: 0.85rem;
+      border: 0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      color: #fff;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+      box-shadow: 0 8px 24px rgba(88, 111, 255, 0.35);
+      margin-top: 0.2rem;
+    }
+    .submit:hover { transform: translateY(-2px); filter: brightness(1.08); box-shadow: 0 12px 32px rgba(88, 111, 255, 0.45); }
+    .submit:active { transform: translateY(0); }
+    .submit.loading { color: transparent; pointer-events: none; }
+    .submit.loading::after {
+      content: "";
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 20px; height: 20px;
+      margin: -10px 0 0 -10px;
+      border: 2.5px solid rgba(255, 255, 255, 0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .msg { min-height: 1.3rem; margin: 0.9rem 0 0; font-size: 0.875rem; text-align: center; color: var(--muted); transition: color 0.2s ease; }
+    .msg.error { color: var(--error); }
+    .msg.ok { color: var(--ok); }
+
+    /* ---- success overlay ---- */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      border-radius: 24px;
+      background: rgba(13, 18, 36, 0.92);
+      backdrop-filter: blur(8px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    .overlay.show { opacity: 1; pointer-events: auto; }
+    .overlay svg { width: 74px; height: 74px; }
+    .overlay .ring { stroke: var(--ok); stroke-width: 2.5; fill: none; stroke-dasharray: 166; stroke-dashoffset: 166; }
+    .overlay .tick { stroke: var(--ok); stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 48; stroke-dashoffset: 48; }
+    .overlay.show .ring { animation: draw 0.6s ease forwards; }
+    .overlay.show .tick { animation: draw 0.4s ease 0.45s forwards; }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+    .overlay p { margin: 0; color: var(--text); font-weight: 600; }
   </style>
 </head>
 <body>
-  <main class="card">
-    <div class="avatar">👋</div>
-    <h1>Hi, I'm Dimitris</h1>
-    <p class="tag">Tinkering with code, servers, and whatever looks interesting this week. This is my little corner of the internet.</p>
-    <div class="divider"></div>
-    <nav class="links">
-      <a href="https://github.com/paralysisx">
-        <span>⌨️</span>
-        <span class="label">GitHub</span>
-        <span class="sub">@paralysisx</span>
-      </a>
-      <a href="/login">
-        <span>🔐</span>
-        <span class="label">Sign in</span>
-        <span class="sub">demo with real database</span>
-      </a>
-    </nav>
-    <footer>parals.net · deployed automatically from <a href="https://github.com/paralysisx/parals-site">GitHub</a></footer>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <main class="card" id="card">
+    <h1 class="brand">parals</h1>
+    <p class="sub">Sign in to your account, or create one in seconds.</p>
+
+    <div class="tabs" id="tabs">
+      <div class="pill"></div>
+      <button type="button" id="tab-in" class="active">Sign in</button>
+      <button type="button" id="tab-up">Register</button>
+    </div>
+
+    <div class="panels" id="panels">
+      <form class="panel" id="panel-in" novalidate>
+        <div class="field">
+          <input id="in-user" placeholder=" " autocomplete="username" required>
+          <label for="in-user">Username</label>
+        </div>
+        <div class="field">
+          <input id="in-pass" type="password" placeholder=" " autocomplete="current-password" required>
+          <label for="in-pass">Password</label>
+        </div>
+        <button class="submit" type="submit">Sign in</button>
+      </form>
+
+      <form class="panel off-right" id="panel-up" novalidate>
+        <div class="field">
+          <input id="up-user" placeholder=" " autocomplete="username" required>
+          <label for="up-user">Choose a username</label>
+        </div>
+        <div class="field">
+          <input id="up-pass" type="password" placeholder=" " autocomplete="new-password" required>
+          <label for="up-pass">Password (8+ characters)</label>
+        </div>
+        <div class="field">
+          <input id="up-pass2" type="password" placeholder=" " autocomplete="new-password" required>
+          <label for="up-pass2">Repeat password</label>
+        </div>
+        <button class="submit" type="submit">Create account</button>
+      </form>
+    </div>
+
+    <p class="msg" id="msg"></p>
+
+    <div class="overlay" id="overlay">
+      <svg viewBox="0 0 56 56">
+        <circle class="ring" cx="28" cy="28" r="26"/>
+        <path class="tick" d="M17 29.5 L24.5 37 L39 20.5"/>
+      </svg>
+      <p id="overlay-text">Welcome!</p>
+    </div>
   </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const panels = $("panels");
+    let mode = "in";
+
+    function layout() {
+      panels.style.height = $("panel-" + mode).offsetHeight + "px";
+    }
+
+    function setMode(m) {
+      if (m === mode) return;
+      mode = m;
+      $("tabs").classList.toggle("signup", m === "up");
+      $("tab-in").classList.toggle("active", m === "in");
+      $("tab-up").classList.toggle("active", m === "up");
+      $("panel-in").className = "panel" + (m === "in" ? "" : " off-left");
+      $("panel-up").className = "panel" + (m === "up" ? "" : " off-right");
+      setMsg("");
+      layout();
+    }
+    $("tab-in").onclick = () => setMode("in");
+    $("tab-up").onclick = () => setMode("up");
+    window.addEventListener("resize", layout);
+    layout();
+
+    function setMsg(text, cls) {
+      const el = $("msg");
+      el.textContent = text;
+      el.className = "msg" + (cls ? " " + cls : "");
+    }
+
+    function fail(message) {
+      setMsg(message, "error");
+      const card = $("card");
+      card.classList.remove("shake");
+      void card.offsetWidth; // restart animation
+      card.classList.add("shake");
+    }
+
+    function succeed(username, created) {
+      $("overlay-text").textContent = created ? `Account created — welcome, ${username}!` : `Welcome back, ${username}!`;
+      $("overlay").classList.add("show");
+      setTimeout(() => location.href = "/welcome", 1300);
+    }
+
+    async function submit(url, payload, btn) {
+      btn.classList.add("loading");
+      try {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (!res.ok) fail(data.error || "Something went wrong");
+        else succeed(data.username, data.created);
+      } catch {
+        fail("Network error — try again");
+      } finally {
+        btn.classList.remove("loading");
+      }
+    }
+
+    $("panel-in").onsubmit = (e) => {
+      e.preventDefault();
+      const user = $("in-user").value.trim(), pass = $("in-pass").value;
+      if (!user || !pass) return fail("Fill in both fields");
+      submit("/api/login", { username: user, password: pass }, e.target.querySelector(".submit"));
+    };
+
+    $("panel-up").onsubmit = (e) => {
+      e.preventDefault();
+      const user = $("up-user").value.trim(), pass = $("up-pass").value, pass2 = $("up-pass2").value;
+      if (!user || !pass) return fail("Fill in all fields");
+      if (pass.length < 8) return fail("Password must be at least 8 characters");
+      if (pass !== pass2) return fail("Passwords don't match");
+      submit("/api/register", { username: user, password: pass }, e.target.querySelector(".submit"));
+    };
+
+    // Already signed in? Go straight to the welcome page.
+    fetch("/api/me").then((res) => { if (res.ok) location.replace("/welcome"); }).catch(() => {});
+  </script>
 </body>
 </html>
