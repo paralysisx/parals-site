@@ -4,5 +4,9 @@
   "compatibility_date": "2026-07-05",
   "assets": {
     "directory": "./public"
-  }
+  },
+  "routes": [
+    { "pattern": "parals.net", "custom_domain": true },
+    { "pattern": "www.parals.net", "custom_domain": true }
+  ]
 }
