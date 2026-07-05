@@ -3,35 +3,94 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>parals.net — it works!</title>
+  <title>Dimitris — parals.net</title>
+  <meta name="description" content="Personal page of Dimitris">
   <style>
+    :root {
+      --bg: #0b1020;
+      --card: #121a30;
+      --border: #24304f;
+      --text: #e6ebf5;
+      --muted: #8b96b3;
+      --accent: #6ea8fe;
+    }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: system-ui, sans-serif;
-      background: #0f172a;
-      color: #e2e8f0;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(1200px 600px at 80% -10%, #1b2a55 0%, transparent 60%),
+        radial-gradient(900px 500px at -10% 110%, #14224a 0%, transparent 55%),
+        var(--bg);
+      color: var(--text);
+      padding: 1.5rem;
     }
     .card {
-      text-align: center;
-      padding: 3rem 4rem;
-      border: 1px solid #334155;
-      border-radius: 16px;
-      background: #1e293b;
+      width: 100%;
+      max-width: 26rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.5rem 2.25rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
     }
-    h1 { margin: 0 0 0.5rem; font-size: 2.5rem; }
-    p { margin: 0.25rem 0; color: #94a3b8; }
-    .ok { color: #4ade80; font-weight: bold; }
+    .avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      background: linear-gradient(135deg, #2b4a8f, #16305f);
+      border: 1px solid var(--border);
+      margin-bottom: 1.25rem;
+    }
+    h1 { margin: 0 0 0.35rem; font-size: 1.7rem; letter-spacing: -0.01em; }
+    .tag { margin: 0; color: var(--muted); line-height: 1.6; }
+    .divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
+    .links { display: flex; flex-direction: column; gap: 0.6rem; }
+    .links a {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.7rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      text-decoration: none;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .links a:hover { border-color: var(--accent); background: rgba(110, 168, 254, 0.06); }
+    .links .label { font-weight: 500; }
+    .links .sub { margin-left: auto; color: var(--muted); font-size: 0.85rem; }
+    footer {
+      margin-top: 1.75rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-align: center;
+    }
+    footer a { color: var(--muted); }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>🎉 parals.net is live</h1>
-    <p class="ok">DNS + hosting are working</p>
-    <p>v2 — auto-deployed from GitHub</p>
-  </div>
+  <main class="card">
+    <div class="avatar">👋</div>
+    <h1>Hi, I'm Dimitris</h1>
+    <p class="tag">Tinkering with code, servers, and whatever looks interesting this week. This is my little corner of the internet.</p>
+    <div class="divider"></div>
+    <nav class="links">
+      <a href="https://github.com/paralysisx">
+        <span>⌨️</span>
+        <span class="label">GitHub</span>
+        <span class="sub">@paralysisx</span>
+      </a>
+    </nav>
+    <footer>parals.net · deployed automatically from <a href="https://github.com/paralysisx/parals-site">GitHub</a></footer>
+  </main>
 </body>
 </html>
