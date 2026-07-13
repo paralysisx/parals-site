@@ -48,23 +48,27 @@
     }
     @media (max-width: 1024px) { .rails { display: none; } }
 
-    /* aurora background — Aceternity-style animated gradient, keyed to the palette */
+    /* aurora background — faithful Aceternity aurora reimplemented in CSS.
+       Two stacked layers (static + drifting, blended) over the full viewport. */
     .aurora { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
     .aurora::before {
-      content: ""; position: absolute; inset: -40%;
+      content: ""; position: absolute; inset: -20%;
       --stripe: repeating-linear-gradient(100deg, var(--bg) 0%, var(--bg) 7%, transparent 10%, transparent 12%, var(--bg) 16%);
-      --aur: repeating-linear-gradient(100deg, #37a5ff 10%, #7c6cff 15%, #60a5fa 20%, #a5b4fc 25%, #2dd4bf 30%);
+      --aur: repeating-linear-gradient(100deg, #3b82f6 10%, #a5b4fc 15%, #93c5fd 20%, #ddd6fe 25%, #60a5fa 30%);
       background-image: var(--stripe), var(--aur);
       background-size: 300% 200%;
       background-position: 50% 50%, 50% 50%;
-      filter: blur(42px);
-      opacity: 0.62;
-      -webkit-mask-image: radial-gradient(ellipse 110% 66% at 50% 0%, #000 24%, transparent 76%);
-      mask-image: radial-gradient(ellipse 110% 66% at 50% 0%, #000 24%, transparent 76%);
-      animation: aurora 55s linear infinite;
+      filter: blur(11px);
+      opacity: 0.48;
+      -webkit-mask-image: radial-gradient(ellipse 135% 112% at 50% -10%, #000 60%, transparent 100%);
+      mask-image: radial-gradient(ellipse 135% 112% at 50% -10%, #000 60%, transparent 100%);
+      animation: aurora 60s linear infinite;
       will-change: background-position;
     }
-    @keyframes aurora { to { background-position: 350% 50%, 350% 50%; } }
+    @keyframes aurora {
+      from { background-position: 50% 50%, 50% 50%; }
+      to   { background-position: 350% 50%, 350% 50%; }
+    }
     @media (prefers-reduced-motion: reduce) { .aurora::before { animation: none; } }
 
     /* ---- top bar ---- */
@@ -122,7 +126,9 @@
     .intro {
       opacity: 0; transform: translateY(10px);
       transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+      text-shadow: 0 1px 16px rgba(5, 7, 12, 0.6);
     }
+    .section-head { text-shadow: 0 1px 16px rgba(5, 7, 12, 0.6); }
     .ready .intro { opacity: 1; transform: none; }
     .eyebrow {
       font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.18em;
