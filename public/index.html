@@ -353,6 +353,10 @@
           <label for="up-user">Choose a username</label>
         </div>
         <div class="field">
+          <input id="up-email" type="email" placeholder=" " autocomplete="email" required>
+          <label for="up-email">Email address</label>
+        </div>
+        <div class="field">
           <input id="up-pass" type="password" placeholder=" " autocomplete="new-password" required>
           <label for="up-pass">Password (8+ characters)</label>
         </div>
@@ -360,7 +364,7 @@
           <input id="up-pass2" type="password" placeholder=" " autocomplete="new-password" required>
           <label for="up-pass2">Repeat password</label>
         </div>
-        <button class="submit" type="submit">Create account</button>
+        <button class="submit" type="submit">Request access</button>
       </form>
     </div>
 
@@ -460,6 +464,17 @@
       setTimeout(() => location.href = "/welcome", 1300);
     }
 
+    // Registration doesn't sign you in — it's queued for admin approval.
+    function pendingSubmitted() {
+      $("overlay-text").textContent = "Request received — you'll be able to sign in once an admin approves it.";
+      $("overlay").classList.add("show");
+      setTimeout(() => {
+        $("overlay").classList.remove("show");
+        setMode("in");
+        setMsg("Registration request sent — awaiting approval.", "ok");
+      }, 2600);
+    }
+
     async function submit(url, payload, btn) {
       btn.classList.add("loading");
       try {
@@ -470,6 +485,7 @@
         });
         const data = await res.json();
         if (!res.ok) fail(data.error || "Something went wrong");
+        else if (data.pending) pendingSubmitted();
         else succeed(data.username, data.created);
       } catch {
         fail("Network error — try again");
@@ -487,11 +503,13 @@
 
     $("panel-up").onsubmit = (e) => {
       e.preventDefault();
-      const user = $("up-user").value.trim(), pass = $("up-pass").value, pass2 = $("up-pass2").value;
-      if (!user || !pass) return fail("Fill in all fields");
+      const user = $("up-user").value.trim(), email = $("up-email").value.trim();
+      const pass = $("up-pass").value, pass2 = $("up-pass2").value;
+      if (!user || !email || !pass) return fail("Fill in all fields");
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fail("Enter a valid email address");
       if (pass.length < 8) return fail("Password must be at least 8 characters");
       if (pass !== pass2) return fail("Passwords don't match");
-      submit("/api/register", { username: user, password: pass }, e.target.querySelector(".submit"));
+      submit("/api/register", { username: user, email, password: pass }, e.target.querySelector(".submit"));
     };
 
     // Already signed in? Go straight to the welcome page.

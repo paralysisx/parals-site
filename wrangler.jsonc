@@ -6,8 +6,17 @@
   "assets": {
     "directory": "./public",
     "binding": "ASSETS",
-    "run_worker_first": ["/api/*"]
+    "run_worker_first": ["/api/*", "/admin/*"]
   },
+  // Email Routing binding for admin registration notifications.
+  // Delivers to the verified destination below. it@parals.net forwards to this
+  // same inbox, so approval requests land where you'd read it@parals.net.
+  "send_email": [
+    {
+      "name": "EMAIL",
+      "destination_address": "hristoylasdimitris@gmail.com"
+    }
+  ],
   "routes": [
     { "pattern": "parals.net", "custom_domain": true },
     { "pattern": "www.parals.net", "custom_domain": true }
