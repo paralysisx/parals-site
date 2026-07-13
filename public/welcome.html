@@ -48,28 +48,32 @@
     }
     @media (max-width: 1024px) { .rails { display: none; } }
 
-    /* aurora background — faithful Aceternity aurora reimplemented in CSS.
-       Two stacked layers (static + drifting, blended) over the full viewport. */
-    .aurora { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
-    .aurora::before {
-      content: ""; position: absolute; inset: -20%;
-      --stripe: repeating-linear-gradient(100deg, var(--bg) 0%, var(--bg) 7%, transparent 10%, transparent 12%, var(--bg) 16%);
-      --aur: repeating-linear-gradient(100deg, #3b82f6 10%, #a5b4fc 15%, #93c5fd 20%, #ddd6fe 25%, #60a5fa 30%);
-      background-image: var(--stripe), var(--aur);
-      background-size: 300% 200%;
+    /* aurora background — 1:1 port of Aceternity's AuroraBackground (dark variant) */
+    .aurora {
+      position: fixed; inset: -10px; z-index: 0; overflow: hidden;
+      pointer-events: none; opacity: 0.5; will-change: transform;
+      --dark-gradient: repeating-linear-gradient(100deg, #000 0%, #000 7%, transparent 10%, transparent 12%, #000 16%);
+      --aurora: repeating-linear-gradient(100deg, #3b82f6 10%, #a5b4fc 15%, #93c5fd 20%, #ddd6fe 25%, #60a5fa 30%);
+      background-image: var(--dark-gradient), var(--aurora);
+      background-size: 300%, 200%;
       background-position: 50% 50%, 50% 50%;
-      filter: blur(11px);
-      opacity: 0.48;
-      -webkit-mask-image: radial-gradient(ellipse 135% 112% at 50% -10%, #000 60%, transparent 100%);
-      mask-image: radial-gradient(ellipse 135% 112% at 50% -10%, #000 60%, transparent 100%);
+      filter: blur(10px);
+      -webkit-mask-image: radial-gradient(ellipse at 100% 0%, black 10%, transparent 70%);
+      mask-image: radial-gradient(ellipse at 100% 0%, black 10%, transparent 70%);
+    }
+    .aurora::after {
+      content: ""; position: absolute; inset: 0;
+      background-image: var(--dark-gradient), var(--aurora);
+      background-size: 200%, 100%;
+      background-attachment: fixed;
+      mix-blend-mode: difference;
       animation: aurora 60s linear infinite;
-      will-change: background-position;
     }
     @keyframes aurora {
       from { background-position: 50% 50%, 50% 50%; }
       to   { background-position: 350% 50%, 350% 50%; }
     }
-    @media (prefers-reduced-motion: reduce) { .aurora::before { animation: none; } }
+    @media (prefers-reduced-motion: reduce) { .aurora::after { animation: none; } }
 
     /* ---- top bar ---- */
     .topbar {
