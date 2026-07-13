@@ -48,6 +48,25 @@
     }
     @media (max-width: 1024px) { .rails { display: none; } }
 
+    /* aurora background — Aceternity-style animated gradient, keyed to the palette */
+    .aurora { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    .aurora::before {
+      content: ""; position: absolute; inset: -40%;
+      --stripe: repeating-linear-gradient(100deg, var(--bg) 0%, var(--bg) 7%, transparent 10%, transparent 12%, var(--bg) 16%);
+      --aur: repeating-linear-gradient(100deg, #37a5ff 10%, #7c6cff 15%, #60a5fa 20%, #a5b4fc 25%, #2dd4bf 30%);
+      background-image: var(--stripe), var(--aur);
+      background-size: 300% 200%;
+      background-position: 50% 50%, 50% 50%;
+      filter: blur(42px);
+      opacity: 0.62;
+      -webkit-mask-image: radial-gradient(ellipse 110% 66% at 50% 0%, #000 24%, transparent 76%);
+      mask-image: radial-gradient(ellipse 110% 66% at 50% 0%, #000 24%, transparent 76%);
+      animation: aurora 55s linear infinite;
+      will-change: background-position;
+    }
+    @keyframes aurora { to { background-position: 350% 50%, 350% 50%; } }
+    @media (prefers-reduced-motion: reduce) { .aurora::before { animation: none; } }
+
     /* ---- top bar ---- */
     .topbar {
       position: sticky; top: 0; z-index: 5;
@@ -196,6 +215,7 @@
   </style>
 </head>
 <body>
+  <div class="aurora" aria-hidden="true"></div>
   <div class="rails" aria-hidden="true"></div>
 
   <header class="topbar">
