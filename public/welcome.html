@@ -101,6 +101,7 @@
     .program:hover { transform: translateY(-3px); border-color: rgba(45, 212, 191, 0.5); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.4); }
     .program .picon { width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; }
     .program .pname { font-weight: 700; font-size: 1.05rem; }
+    .program .ext { color: var(--muted); font-size: 0.8rem; font-weight: 600; }
     .program .pdesc { color: var(--muted); font-size: 0.85rem; line-height: 1.4; }
     .program .pgo { margin-top: auto; color: #2dd4bf; font-size: 0.85rem; font-weight: 600; }
 
@@ -149,12 +150,12 @@
 
     <p class="section-label">Programs</p>
     <div class="grid">
-      <a class="program" href="/serenity">
+      <a class="program" href="https://bithm-production.up.railway.app/workspaces" target="_blank" rel="noopener">
         <span class="picon" style="background:linear-gradient(135deg,#2dd4bf,#14b8a6)">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#04201c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3C7 8 7 13 12 21c5-8 5-13 0-18Z"/><path d="M12 21c-4-2-6-5-6-9"/><path d="M12 21c4-2 6-5 6-9"/></svg>
         </span>
-        <span class="pname">Serenity</span>
-        <span class="pdesc">Calm, focused workspace. Your first sub-program.</span>
+        <span class="pname">Serenity <span class="ext" aria-hidden="true">&#8599;</span></span>
+        <span class="pdesc">Your workspaces app — the first parals program.</span>
         <span class="pgo">Open &rarr;</span>
       </a>
 
