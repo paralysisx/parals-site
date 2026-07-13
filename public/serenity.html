@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Serenity — parals</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232dd4bf'/%3E%3Cstop offset='1' stop-color='%2314b8a6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='15' fill='url(%23g)'/%3E%3Cpath d='M32 12c-11 12-11 24 0 40 11-16 11-28 0-40Z' fill='none' stroke='%2304201c' stroke-width='4' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --bg: #060f12;
+      --card: rgba(16, 32, 34, 0.72);
+      --border: rgba(90, 180, 165, 0.22);
+      --text: #e7fbf5;
+      --muted: #86a9a2;
+      --accent1: #2dd4bf;
+      --accent2: #14b8a6;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 3rem 1.5rem;
+    }
+    .orb { position: fixed; border-radius: 50%; filter: blur(100px); opacity: 0.4; pointer-events: none; z-index: 0; }
+    .orb-1 { width: 500px; height: 500px; background: #0f6f60; top: -160px; right: -140px; animation: drift1 22s ease-in-out infinite alternate; }
+    .orb-2 { width: 420px; height: 420px; background: #123f70; bottom: -180px; left: -120px; animation: drift2 26s ease-in-out infinite alternate; }
+    @keyframes drift1 { to { transform: translate(-90px, 80px) scale(1.12); } }
+    @keyframes drift2 { to { transform: translate(80px, -70px) scale(1.08); } }
+    @media (prefers-reduced-motion: reduce) { .orb { animation: none; } }
+
+    .wrap {
+      position: relative; z-index: 1; width: 100%; max-width: 46rem;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .wrap.ready { opacity: 1; transform: none; }
+
+    .topbar { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 2rem; }
+    .brand-row { display: flex; align-items: center; gap: 0.6rem; }
+    .logo { width: 36px; height: 36px; border-radius: 10px; }
+    .brand { margin: 0; font-size: 1.2rem; font-weight: 700; letter-spacing: -0.01em; }
+    .topbar .spacer { flex: 1; }
+    .navlink {
+      padding: 0.45rem 0.85rem; border: 1px solid var(--border); border-radius: 999px;
+      background: rgba(6, 15, 18, 0.5); color: var(--muted); font: inherit; font-size: 0.85rem;
+      text-decoration: none; cursor: pointer; transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    }
+    .navlink:hover { border-color: var(--accent1); color: var(--text); }
+    .navlink.out:hover { border-color: #fb7185; color: #fecdd3; background: rgba(251, 113, 133, 0.08); }
+
+    .hero {
+      background: var(--card); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border); border-radius: 22px; padding: 2.25rem;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5); margin-bottom: 1.25rem;
+    }
+    .hero .badge {
+      display: inline-block; padding: 0.3rem 0.7rem; border-radius: 999px; font-size: 0.72rem;
+      letter-spacing: 0.1em; text-transform: uppercase; color: #04201c; font-weight: 700;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2)); margin-bottom: 1rem;
+    }
+    .hero h1 { margin: 0 0 0.5rem; font-size: 2.1rem; letter-spacing: -0.02em; }
+    .hero p { margin: 0; color: var(--muted); font-size: 1rem; line-height: 1.6; max-width: 34rem; }
+
+    .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; }
+    .tile {
+      background: var(--card); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border); border-radius: 16px; padding: 1.3rem;
+    }
+    .tile .k { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+    .tile .v { font-size: 1.5rem; font-weight: 700; }
+    .tile .v.soft { color: var(--muted); font-size: 1.05rem; font-weight: 600; }
+
+    .note {
+      margin-top: 1.25rem; padding: 1rem 1.2rem; border-radius: 14px;
+      border: 1px dashed var(--border); color: var(--muted); font-size: 0.9rem; line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="wrap" id="wrap">
+    <div class="topbar">
+      <div class="brand-row">
+        <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
+          <defs>
+            <linearGradient id="s-g" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#2dd4bf"/>
+              <stop offset="1" stop-color="#14b8a6"/>
+            </linearGradient>
+          </defs>
+          <rect width="64" height="64" rx="15" fill="url(#s-g)"/>
+          <path d="M32 12c-11 12-11 24 0 40 11-16 11-28 0-40Z" fill="none" stroke="#04201c" stroke-width="4" stroke-linejoin="round"/>
+        </svg>
+        <p class="brand">Serenity</p>
+      </div>
+      <span class="spacer"></span>
+      <a class="navlink" href="/welcome">&larr; Hub</a>
+      <button class="navlink out" id="signout" type="button">Sign out</button>
+    </div>
+
+    <div class="hero">
+      <span class="badge">parals · program</span>
+      <h1>Welcome to Serenity</h1>
+      <p id="greeting">A calm, focused space inside parals. This is your Serenity dashboard — the essentials live here, and more will land as the program grows.</p>
+    </div>
+
+    <div class="tiles">
+      <div class="tile"><div class="k">Status</div><div class="v">Online</div></div>
+      <div class="tile"><div class="k">Signed in as</div><div class="v soft" id="whoami">…</div></div>
+      <div class="tile"><div class="k">Sessions</div><div class="v soft">Ready</div></div>
+    </div>
+
+    <div class="note">This is the starting shell for Serenity. Tell me what it should actually do — modules, data, actions — and I'll build the real dashboard on top of this.</div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    fetch("/api/me").then(async (res) => {
+      if (!res.ok) { location.replace("/"); return; }
+      const data = await res.json();
+      $("whoami").textContent = data.username;
+      $("greeting").textContent = "Hey " + data.username + " — a calm, focused space inside parals. This is your Serenity dashboard; more lands as the program grows.";
+      $("wrap").classList.add("ready");
+    }).catch(() => location.replace("/"));
+
+    $("signout").onclick = async () => {
+      await fetch("/api/logout", { method: "POST" });
+      location.replace("/");
+    };
+  </script>
+</body>
+</html>
