@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>parals — admin</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237c5cff'/%3E%3Cstop offset='1' stop-color='%2337a5ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='15' fill='url(%23g)'/%3E%3Cpath d='M27 20l-7 24' stroke='%23fff' stroke-width='5.5' stroke-linecap='round'/%3E%3Cpath d='M44 20l-7 24' stroke='%23fff' stroke-width='5.5' stroke-linecap='round' opacity='.72'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --bg: #070b18;
+      --card: rgba(19, 26, 48, 0.72);
+      --border: rgba(110, 130, 190, 0.22);
+      --text: #eaeefb;
+      --muted: #8d97b5;
+      --accent1: #7c5cff;
+      --accent2: #37a5ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 3rem 1.5rem;
+    }
+    .grid-layer {
+      position: fixed;
+      inset: -60px;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(120, 145, 220, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(120, 145, 220, 0.05) 1px, transparent 1px);
+      background-size: 54px 54px;
+      -webkit-mask-image: radial-gradient(ellipse 75% 65% at 50% 30%, black 25%, transparent 75%);
+      mask-image: radial-gradient(ellipse 75% 65% at 50% 30%, black 25%, transparent 75%);
+    }
+    .wrap { position: relative; z-index: 1; width: 100%; max-width: 40rem; }
+    .head { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 1.6rem; }
+    .logo { width: 38px; height: 38px; border-radius: 10px; }
+    .head h1 { margin: 0; font-size: 1.4rem; letter-spacing: -0.02em; }
+    .head .spacer { flex: 1; }
+    .head a { color: var(--muted); text-decoration: none; font-size: 0.9rem; }
+    .head a:hover { color: var(--text); }
+
+    .card {
+      background: var(--card);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1.5rem;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+    }
+    .card h2 { margin: 0 0 0.25rem; font-size: 1.05rem; }
+    .card .hint { margin: 0 0 1.25rem; color: var(--muted); font-size: 0.85rem; }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.9rem 0;
+      border-top: 1px solid var(--border);
+    }
+    .row:first-of-type { border-top: 0; }
+    .row .info { flex: 1; min-width: 0; }
+    .row .u { font-weight: 600; }
+    .row .e { color: var(--muted); font-size: 0.85rem; word-break: break-all; }
+    .row .t { color: var(--muted); font-size: 0.75rem; margin-top: 0.15rem; }
+    .row .acts { display: flex; gap: 0.5rem; flex-shrink: 0; }
+    .btn {
+      padding: 0.5rem 0.9rem;
+      border: 0;
+      border-radius: 9px;
+      font: inherit;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #fff;
+      cursor: pointer;
+      transition: filter 0.15s ease, opacity 0.15s ease;
+    }
+    .btn:hover { filter: brightness(1.1); }
+    .btn:disabled { opacity: 0.5; cursor: default; }
+    .approve { background: linear-gradient(135deg, #22c55e, #16a34a); }
+    .decline { background: linear-gradient(135deg, #fb7185, #e11d48); }
+
+    .state { color: var(--muted); text-align: center; padding: 2rem 0; }
+    .state.err { color: #fb7185; }
+    a.button-link {
+      display: inline-block; margin-top: 1rem; color: var(--accent2);
+      text-decoration: none; font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-layer"></div>
+  <div class="wrap">
+    <div class="head">
+      <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
+        <defs>
+          <linearGradient id="logo-g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#7c5cff"/>
+            <stop offset="1" stop-color="#37a5ff"/>
+          </linearGradient>
+        </defs>
+        <rect width="64" height="64" rx="15" fill="url(#logo-g)"/>
+        <path d="M27 20l-7 24" stroke="#fff" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M44 20l-7 24" stroke="#fff" stroke-width="5.5" stroke-linecap="round" opacity="0.72"/>
+      </svg>
+      <h1>parals admin</h1>
+      <span class="spacer"></span>
+      <a href="/welcome">&larr; Back</a>
+    </div>
+
+    <div class="card">
+      <h2>Pending registrations</h2>
+      <p class="hint">Approve to activate the account, or decline to remove the request.</p>
+      <div id="list"><div class="state">Loading…</div></div>
+    </div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const list = $("list");
+
+    function esc(s) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
+        ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
+
+    async function guard() {
+      let me;
+      try {
+        const res = await fetch("/api/me");
+        if (!res.ok) { location.replace("/"); return false; }
+        me = await res.json();
+      } catch { location.replace("/"); return false; }
+      if (me.role !== "admin") {
+        list.innerHTML = '<div class="state err">You are signed in as ' + esc(me.username) +
+          ', but this page is for admins only.<br><a class="button-link" href="/welcome">Go to your account</a></div>';
+        return false;
+      }
+      return true;
+    }
+
+    function render(pending) {
+      if (!pending.length) {
+        list.innerHTML = '<div class="state">No pending requests. 🎉</div>';
+        return;
+      }
+      list.innerHTML = pending.map((u) => {
+        const when = u.created_at ? new Date(u.created_at.replace(" ", "T") + "Z").toLocaleString() : "";
+        return '<div class="row" data-id="' + u.id + '">' +
+          '<div class="info">' +
+            '<div class="u">' + esc(u.username) + '</div>' +
+            '<div class="e">' + esc(u.email || "—") + '</div>' +
+            '<div class="t">' + esc(when) + '</div>' +
+          '</div>' +
+          '<div class="acts">' +
+            '<button class="btn approve" data-act="approve">Approve</button>' +
+            '<button class="btn decline" data-act="decline">Decline</button>' +
+          '</div>' +
+        '</div>';
+      }).join("");
+    }
+
+    async function load() {
+      try {
+        const res = await fetch("/api/admin/pending");
+        if (!res.ok) { list.innerHTML = '<div class="state err">Could not load requests.</div>'; return; }
+        const data = await res.json();
+        render(data.pending || []);
+      } catch {
+        list.innerHTML = '<div class="state err">Network error.</div>';
+      }
+    }
+
+    list.addEventListener("click", async (e) => {
+      const btn = e.target.closest(".btn");
+      if (!btn) return;
+      const row = btn.closest(".row");
+      const id = row.dataset.id;
+      const act = btn.dataset.act;
+      row.querySelectorAll(".btn").forEach((b) => (b.disabled = true));
+      try {
+        const res = await fetch("/api/admin/" + act, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: Number(id) }),
+        });
+        if (!res.ok) { row.querySelectorAll(".btn").forEach((b) => (b.disabled = false)); return; }
+        row.style.transition = "opacity .25s ease";
+        row.style.opacity = "0";
+        setTimeout(load, 260);
+      } catch {
+        row.querySelectorAll(".btn").forEach((b) => (b.disabled = false));
+      }
+    });
+
+    (async () => { if (await guard()) load(); })();
+  </script>
+</body>
+</html>

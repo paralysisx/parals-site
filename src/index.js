@@ -69,6 +69,9 @@ async function handleApi(request, env, url, ctx) {
     case "GET /api/me": return me(request, env);
     case "POST /api/approve": return decide(request, env, "approve");
     case "POST /api/decline": return decide(request, env, "decline");
+    case "GET /api/admin/pending": return adminPending(request, env);
+    case "POST /api/admin/approve": return adminDecide(request, env, "approve");
+    case "POST /api/admin/decline": return adminDecide(request, env, "decline");
     default: return json({ error: "Not found" }, 404);
   }
 }
@@ -154,18 +157,21 @@ async function logout(request, env) {
 }
 
 async function me(request, env) {
-  const token = getCookie(request, "session");
-  if (!token) return json({ error: "Not signed in" }, 401);
+  const user = await currentUser(request, env);
+  if (!user) return json({ error: "Not signed in" }, 401, clearCookieHeader());
+  return json({ username: user.username, created_at: user.created_at, role: user.role });
+}
 
+// Resolve the signed-in user from the session cookie, or null if none/expired.
+async function currentUser(request, env) {
+  const token = getCookie(request, "session");
+  if (!token) return null;
   const row = await env.DB.prepare(
-    `SELECT u.username, u.created_at, s.expires_at FROM sessions s
+    `SELECT u.id, u.username, u.role, u.created_at, s.expires_at FROM sessions s
      JOIN users u ON u.id = s.user_id WHERE s.token = ?`
   ).bind(token).first();
-
-  if (!row || row.expires_at < Date.now()) {
-    return json({ error: "Session expired" }, 401, clearCookieHeader());
-  }
-  return json({ username: row.username, created_at: row.created_at });
+  if (!row || row.expires_at < Date.now()) return null;
+  return row;
 }
 
 // ---- registration approval ----
@@ -194,6 +200,52 @@ async function decide(request, env, action) {
   // Decline: remove the pending account entirely so the username frees up.
   await env.DB.prepare("DELETE FROM users WHERE id = ?").bind(user.id).run();
   return json({ ok: true, username: user.username, result: "declined" });
+}
+
+// List pending sign-ups for the admin panel. Admin session required.
+async function adminPending(request, env) {
+  const admin = await requireAdmin(request, env);
+  if (admin.error) return admin.error;
+
+  const { results } = await env.DB.prepare(
+    "SELECT id, username, email, created_at FROM users WHERE status = 'pending' ORDER BY created_at"
+  ).all();
+  return json({ pending: results });
+}
+
+// Approve or decline a pending user by id, from the admin panel. Admin required.
+async function adminDecide(request, env, action) {
+  const admin = await requireAdmin(request, env);
+  if (admin.error) return admin.error;
+
+  const body = await readBody(request);
+  const id = parseInt(body.id, 10);
+  if (!id) return json({ error: "Missing id" }, 400);
+
+  const target = await env.DB.prepare(
+    "SELECT id, username, status FROM users WHERE id = ?"
+  ).bind(id).first();
+  if (!target || target.status !== "pending") {
+    return json({ error: "That request no longer exists." }, 404);
+  }
+
+  if (action === "approve") {
+    await env.DB.prepare(
+      "UPDATE users SET status = 'approved', approval_token = NULL WHERE id = ?"
+    ).bind(id).run();
+    return json({ ok: true, username: target.username, result: "approved" });
+  }
+
+  await env.DB.prepare("DELETE FROM users WHERE id = ?").bind(id).run();
+  return json({ ok: true, username: target.username, result: "declined" });
+}
+
+// Gate: returns { user } for an admin session, or { error: Response } otherwise.
+async function requireAdmin(request, env) {
+  const user = await currentUser(request, env);
+  if (!user) return { error: json({ error: "Not signed in" }, 401) };
+  if (user.role !== "admin") return { error: json({ error: "Forbidden" }, 403) };
+  return { user };
 }
 
 // Admin-facing HTML page linked from the approval email. Shows the request and

@@ -158,6 +158,20 @@
       transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
     }
     .signout:hover { border-color: #fb7185; background: rgba(251, 113, 133, 0.08); transform: translateY(-1px); }
+
+    .adminlink {
+      display: block;
+      margin: 0 0 0.9rem;
+      padding: 0.85rem;
+      border: 1px solid rgba(124, 92, 255, 0.5);
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(124, 92, 255, 0.18), rgba(55, 165, 255, 0.18));
+      color: var(--text);
+      font-weight: 700;
+      text-decoration: none;
+      transition: filter 0.2s ease, transform 0.15s ease;
+    }
+    .adminlink:hover { filter: brightness(1.15); transform: translateY(-1px); }
   </style>
 </head>
 <body>
@@ -194,6 +208,7 @@
     <h1>You are logged in</h1>
     <p class="who">Signed in as <strong id="whoami">…</strong></p>
     <p class="since" id="since"></p>
+    <a class="adminlink" id="adminlink" href="/admin" hidden>Admin panel &rarr;</a>
     <button class="signout" id="signout" type="button">Sign out</button>
   </main>
 
@@ -243,6 +258,7 @@
       if (!res.ok) { location.replace("/"); return; }
       const data = await res.json();
       $("whoami").textContent = data.username;
+      if (data.role === "admin") $("adminlink").hidden = false;
       if (data.created_at) {
         const d = new Date(data.created_at.replace(" ", "T") + "Z");
         $("since").textContent = "Member since " + d.toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" });

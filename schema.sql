@@ -4,6 +4,8 @@ CREATE TABLE IF NOT EXISTS users (
   password_hash TEXT NOT NULL,
   salt TEXT NOT NULL,
   email TEXT,
+  -- 'user' or 'admin'. Admins can approve/decline pending sign-ups from /admin.
+  role TEXT NOT NULL DEFAULT 'user',
   -- 'pending' until an admin approves; 'approved' accounts may sign in.
   status TEXT NOT NULL DEFAULT 'pending',
   -- Unguessable token for the admin approve/decline link; cleared once decided.
