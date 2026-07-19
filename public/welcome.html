@@ -156,12 +156,12 @@
     .section-head .count { font-family: var(--mono); font-size: 0.76rem; color: var(--faint); font-variant-numeric: tabular-nums; }
 
     .grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 1rem;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1rem;
     }
     .program {
       position: relative;
       display: flex; flex-direction: column;
-      padding: 1.35rem; min-height: 11.5rem;
+      padding: 1.35rem; min-height: 12rem;
       background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
       text-decoration: none; color: inherit;
       opacity: 0; transform: translateY(12px);
@@ -189,6 +189,9 @@
     .pill.live { color: #a7f3d6; border-color: rgba(52, 211, 153, 0.32); background: rgba(52, 211, 153, 0.08); }
     .pill.live .dot { background: var(--live); box-shadow: 0 0 6px var(--live); }
     .pill.soon .dot { background: var(--faint); }
+    .pill.beta { color: #e7d194; border-color: rgba(201, 168, 76, 0.35); background: rgba(201, 168, 76, 0.08); }
+    .pill.beta .dot { background: #c9a84c; box-shadow: 0 0 6px #c9a84c; }
+    .p-mark.gold { background: color-mix(in srgb, #c9a84c 14%, var(--surface)); border-color: color-mix(in srgb, #c9a84c 35%, var(--line)); }
 
     .p-name { font-size: 1.08rem; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 0.35rem; }
     .p-desc { color: var(--muted); font-size: 0.88rem; line-height: 1.5; margin-bottom: 1.1rem; }
@@ -196,10 +199,24 @@
       margin-top: auto; font-family: var(--mono); font-size: 0.76rem; letter-spacing: 0.03em;
       display: flex; align-items: center; gap: 0.4rem; color: var(--accent-soft);
     }
-    .program.soon { pointer-events: none; }
-    .program.soon .p-mark { background: var(--surface-2); border-color: var(--line); }
-    .program.soon .p-name, .program.soon .p-desc { color: var(--faint); }
-    .program.soon .p-foot { color: var(--faint); }
+    .business-features {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: minmax(12rem, 0.8fr) minmax(0, 2.2fr);
+      gap: clamp(1.25rem, 4vw, 3.5rem);
+      align-items: start;
+      margin-top: 0.35rem;
+      padding: clamp(1.25rem, 3vw, 1.75rem) 0 0;
+      border-top: 1px solid var(--line);
+      opacity: 0; transform: translateY(12px);
+      transition: opacity 0.5s ease 0.12s, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.12s;
+    }
+    .ready .business-features { opacity: 1; transform: none; }
+    .feature-intro h3 { margin: 0 0 0.55rem; font-size: 1.1rem; letter-spacing: -0.015em; text-wrap: balance; }
+    .feature-intro p { margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.55; text-wrap: pretty; }
+    .feature-list { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1.5rem; }
+    .feature-list li { display: flex; align-items: baseline; gap: 0.6rem; padding: 0.72rem 0; border-bottom: 1px solid var(--line); color: var(--text); font-size: 0.9rem; }
+    .feature-list li::before { content: "↗"; color: var(--serenity); font-family: var(--mono); font-size: 0.78rem; }
 
     /* ---- footer ---- */
     .footer {
@@ -217,10 +234,11 @@
       .nav { gap: 0.5rem; }
       .adminbtn { padding: 0.35rem 0.5rem; }
       .signout { padding: 0.4rem 0.6rem; }
+      .business-features, .feature-list { grid-template-columns: 1fr; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .intro, .program { transition: none; opacity: 1; transform: none; }
+      .intro, .program, .business-features { transition: none; opacity: 1; transform: none; }
     }
   </style>
 </head>
@@ -264,39 +282,54 @@
     <div class="section-head">
       <h2>Programs</h2>
       <span class="rule"></span>
-      <span class="count">01 active</span>
+      <span class="count">02 active</span>
     </div>
 
     <div class="grid">
-      <a class="program" href="https://bithm-production.up.railway.app/workspaces" target="_blank" rel="noopener">
+      <a class="program" href="https://bithm-production.up.railway.app/workspaces" target="_blank" rel="noopener" aria-label="Open Serenity Business workspace">
         <div class="p-top">
           <span class="p-mark">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3C7 8 7 13 12 21c5-8 5-13 0-18Z"/><path d="M6 12c0 4 2 7 6 9M18 12c0 4-2 7-6 9"/></svg>
           </span>
           <span class="pill live"><span class="dot"></span> Live</span>
         </div>
-        <div class="p-name">Serenity</div>
-        <div class="p-desc">Your workspaces app — the first program on parals.</div>
+        <div class="p-name">Serenity Business</div>
+        <div class="p-desc">The full back office — suppliers, staff, expenses, myDATA.</div>
         <div class="p-foot">Open workspace &#8599;</div>
       </a>
 
-      <div class="program soon" aria-disabled="true">
+      <a class="program" href="https://capture.parals.net" target="_blank" rel="noopener" aria-label="Open Serenity Capture">
         <div class="p-top">
-          <span class="p-mark">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#626a7c" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          <span class="p-mark gold">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#c9a84c" aria-hidden="true"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>
           </span>
-          <span class="pill soon"><span class="dot"></span> Planned</span>
+          <span class="pill beta"><span class="dot"></span> Early</span>
         </div>
-        <div class="p-name">Next program</div>
-        <div class="p-desc">New programs you add to parals will show up here.</div>
-        <div class="p-foot">Not yet available</div>
-      </div>
+        <div class="p-name">Serenity Capture</div>
+        <div class="p-desc">Money in, money out — simple books for small businesses.</div>
+        <div class="p-foot">Open Capture &#8599;</div>
+      </a>
+
+      <section class="business-features" aria-labelledby="business-features-title">
+        <div class="feature-intro">
+          <h3 id="business-features-title">Serenity Business, at a glance</h3>
+          <p>Keep daily operations, people, and compliance connected in one workspace.</p>
+        </div>
+        <ul class="feature-list">
+          <li>Suppliers &amp; purchasing</li>
+          <li>Expense tracking</li>
+          <li>Staff management</li>
+          <li>myDATA workflow</li>
+          <li>Shared workspaces</li>
+          <li>Operational overview</li>
+        </ul>
+      </section>
     </div>
   </main>
 
   <footer class="footer">
     <span>parals<span class="slash">//</span> personal hub</span>
-    <span>Serenity online</span>
+    <span>Serenity family online</span>
   </footer>
 
   <script>
