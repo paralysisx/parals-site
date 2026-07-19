@@ -155,25 +155,26 @@
     .section-head .rule { flex: 1; height: 1px; background: var(--line); }
     .section-head .count { font-family: var(--mono); font-size: 0.76rem; color: var(--faint); font-variant-numeric: tabular-nums; }
 
-    .grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1rem;
-    }
+    .grid { display: grid; gap: 1.25rem; }
+    .program-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(16rem, 0.85fr); gap: 1rem; }
     .program {
       position: relative;
       display: flex; flex-direction: column;
-      padding: 1.35rem; min-height: 12rem;
+      min-height: 17rem; padding: 1.5rem;
       background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
       text-decoration: none; color: inherit;
       opacity: 0; transform: translateY(12px);
       transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-                  border-color 0.18s ease, background 0.18s ease;
+                  border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+      overflow: hidden;
     }
     .ready .program { opacity: 1; transform: none; }
     .ready .program:nth-child(2) { transition-delay: 0.06s; }
-    a.program:hover { border-color: var(--line-strong); background: var(--surface-2); }
+    a.program:hover { transform: translateY(-3px); }
+    .ready a.program:hover { transform: translateY(-3px); }
     a.program:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-    .p-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; }
+    .p-top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: auto; }
     .p-mark {
       width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center;
       background: color-mix(in srgb, var(--serenity) 16%, var(--surface));
@@ -193,14 +194,24 @@
     .pill.beta .dot { background: #c9a84c; box-shadow: 0 0 6px #c9a84c; }
     .p-mark.gold { background: color-mix(in srgb, #c9a84c 14%, var(--surface)); border-color: color-mix(in srgb, #c9a84c 35%, var(--line)); }
 
-    .p-name { font-size: 1.08rem; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 0.35rem; }
-    .p-desc { color: var(--muted); font-size: 0.88rem; line-height: 1.5; margin-bottom: 1.1rem; }
+    .product-type { color: var(--muted); font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.05em; }
+    .p-name { margin: 2.2rem 0 0.45rem; font-size: clamp(1.35rem, 2vw, 1.75rem); font-weight: 650; letter-spacing: -0.03em; line-height: 1.06; text-wrap: balance; }
+    .p-desc { max-width: 38ch; color: var(--muted); font-size: 0.91rem; line-height: 1.55; margin: 0; text-wrap: pretty; }
     .p-foot {
-      margin-top: auto; font-family: var(--mono); font-size: 0.76rem; letter-spacing: 0.03em;
+      margin-top: 1.6rem; font-family: var(--mono); font-size: 0.76rem; letter-spacing: 0.03em;
       display: flex; align-items: center; gap: 0.4rem; color: var(--accent-soft);
     }
+    .business-program { background: radial-gradient(circle at 92% 14%, rgba(45, 212, 191, 0.14), transparent 34%), #10191b; border-color: rgba(45, 212, 191, 0.24); }
+    .business-program::after { content: ""; position: absolute; width: 12rem; height: 12rem; right: -5.8rem; bottom: -7rem; border: 1px solid rgba(103, 232, 249, 0.18); border-radius: 50%; box-shadow: 0 0 0 1.4rem rgba(103, 232, 249, 0.045), 0 0 0 3rem rgba(103, 232, 249, 0.025); pointer-events: none; }
+    .business-program:hover { border-color: rgba(103, 232, 249, 0.56); background: radial-gradient(circle at 92% 14%, rgba(45, 212, 191, 0.2), transparent 38%), #101d1f; }
+    .business-program .p-foot { color: #8ff3e4; }
+    .business-program .p-mark { position: relative; z-index: 1; }
+    .capture-program { background: linear-gradient(145deg, #17140f, #12141b 58%); border-color: rgba(201, 168, 76, 0.25); }
+    .capture-program:hover { border-color: rgba(231, 209, 148, 0.56); background: linear-gradient(145deg, #1e1910, #15161a 60%); }
+    .capture-program .p-name { max-width: 11ch; }
+    .capture-program .p-foot { color: #e7d194; }
+    .capture-program .p-desc { max-width: 26ch; }
     .business-features {
-      grid-column: 1 / -1;
       display: grid;
       grid-template-columns: minmax(12rem, 0.8fr) minmax(0, 2.2fr);
       gap: clamp(1.25rem, 4vw, 3.5rem);
@@ -235,6 +246,12 @@
       .adminbtn { padding: 0.35rem 0.5rem; }
       .signout { padding: 0.4rem 0.6rem; }
       .business-features, .feature-list { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 680px) {
+      .program-grid { grid-template-columns: 1fr; }
+      .program { min-height: 15.5rem; }
+      .capture-program .p-name { max-width: none; }
+      .business-features { grid-template-columns: 1fr; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -286,30 +303,34 @@
     </div>
 
     <div class="grid">
-      <a class="program" href="https://bithm-production.up.railway.app/workspaces" target="_blank" rel="noopener" aria-label="Open Serenity Business workspace">
+      <div class="program-grid">
+      <a class="program business-program" href="https://bithm-production.up.railway.app/workspaces" target="_blank" rel="noopener" aria-label="Open Serenity Business workspace">
         <div class="p-top">
           <span class="p-mark">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3C7 8 7 13 12 21c5-8 5-13 0-18Z"/><path d="M6 12c0 4 2 7 6 9M18 12c0 4-2 7-6 9"/></svg>
           </span>
           <span class="pill live"><span class="dot"></span> Live</span>
         </div>
-        <div class="p-name">Serenity Business</div>
+        <span class="product-type">Operations workspace</span>
+        <h3 class="p-name">Serenity Business</h3>
         <div class="p-desc">The full back office — suppliers, staff, expenses, myDATA.</div>
-        <div class="p-foot">Open workspace &#8599;</div>
+        <span class="p-foot">Launch workspace &#8599;</span>
       </a>
 
-      <a class="program" href="https://capture.parals.net" target="_blank" rel="noopener" aria-label="Open Serenity Capture">
+      <a class="program capture-program" href="https://capture.parals.net" target="_blank" rel="noopener" aria-label="Open Serenity Capture">
         <div class="p-top">
           <span class="p-mark gold">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="#c9a84c" aria-hidden="true"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>
           </span>
           <span class="pill beta"><span class="dot"></span> Early</span>
         </div>
-        <div class="p-name">Serenity Capture</div>
+        <span class="product-type">Simple books</span>
+        <h3 class="p-name">Serenity Capture</h3>
         <div class="p-desc">Money in, money out — simple books for small businesses.</div>
-        <div class="p-foot">Open Capture &#8599;</div>
+        <span class="p-foot">Open Capture &#8599;</span>
       </a>
 
+      </div>
       <section class="business-features" aria-labelledby="business-features-title">
         <div class="feature-intro">
           <h3 id="business-features-title">Serenity Business, at a glance</h3>
