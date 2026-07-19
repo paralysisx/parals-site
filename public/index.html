@@ -3,333 +3,368 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>parals — sign in</title>
+  <title>parals — the Serenity family</title>
+  <meta name="description" content="Serenity Business and Serenity Capture — the hotel back office and dead-simple books for small companies. One account for everything.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237c5cff'/%3E%3Cstop offset='1' stop-color='%2337a5ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='15' fill='url(%23g)'/%3E%3Cpath d='M27 20l-7 24' stroke='%23fff' stroke-width='5.5' stroke-linecap='round'/%3E%3Cpath d='M44 20l-7 24' stroke='%23fff' stroke-width='5.5' stroke-linecap='round' opacity='.72'/%3E%3C/svg%3E">
   <style>
     :root {
       --bg: #070b18;
-      --card: rgba(19, 26, 48, 0.72);
-      --border: rgba(110, 130, 190, 0.22);
+      --surface: #10162b;
+      --surface-2: #141b33;
+      --line: rgba(110, 130, 190, 0.18);
+      --line-strong: rgba(110, 130, 190, 0.34);
       --text: #eaeefb;
+      --body: #aab4d0;
       --muted: #8d97b5;
       --accent1: #7c5cff;
       --accent2: #37a5ff;
-      --accent3: #2dd4bf;
+      --teal: #2dd4bf;
+      --teal-soft: #8ff3e4;
+      --gold: #c9a84c;
+      --gold-soft: #e7d194;
       --error: #fb7185;
       --ok: #34d399;
+      --maxw: 66rem;
+      --z-nav: 10;
+      --z-dialog: 20;
     }
     * { box-sizing: border-box; }
-    html, body { height: 100%; }
+    html { scroll-behavior: smooth; }
     body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      margin: 0; min-height: 100vh;
       font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      padding: 1.5rem;
-      overflow: hidden;
+      background: var(--bg); color: var(--text);
+      -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+      overflow-x: hidden;
     }
 
-    /* ---- animated background: grid + particles + orbs ---- */
-    .px {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      will-change: transform;
-      transition: none;
-    }
+    /* ---- quiet, GPU-cheap ambient background ---- */
+    .px { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
     .grid-layer {
-      position: fixed;
-      inset: -60px;
-      z-index: 0;
-      pointer-events: none;
+      position: fixed; inset: -60px; pointer-events: none;
       background-image:
-        linear-gradient(rgba(120, 145, 220, 0.055) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(120, 145, 220, 0.055) 1px, transparent 1px);
+        linear-gradient(rgba(120, 145, 220, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(120, 145, 220, 0.05) 1px, transparent 1px);
       background-size: 54px 54px;
-      -webkit-mask-image: radial-gradient(ellipse 75% 65% at 50% 45%, black 25%, transparent 75%);
-      mask-image: radial-gradient(ellipse 75% 65% at 50% 45%, black 25%, transparent 75%);
-      animation: grid-pan 40s linear infinite;
+      -webkit-mask-image: radial-gradient(ellipse 80% 62% at 50% 30%, black 25%, transparent 78%);
+      mask-image: radial-gradient(ellipse 80% 62% at 50% 30%, black 25%, transparent 78%);
+      opacity: 0.75;
     }
-    @keyframes grid-pan { to { transform: translate(54px, 54px); } }
+    .ambient { position: fixed; inset: 0; background:
+      radial-gradient(55rem 38rem at -12% -18%, rgba(72, 58, 171, 0.28), transparent 62%),
+      radial-gradient(44rem 36rem at 108% 42%, rgba(18, 63, 112, 0.24), transparent 66%),
+      radial-gradient(36rem 30rem at 34% 110%, rgba(15, 79, 74, 0.2), transparent 64%); }
 
-    .stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-    .star {
-      position: absolute;
-      bottom: -6px;
-      border-radius: 50%;
-      background: #aecbff;
-      opacity: 0;
-      animation: rise linear infinite;
+    /* ---- top bar ---- */
+    .topbar {
+      position: sticky; top: 0; z-index: var(--z-nav);
+      display: flex; align-items: center; gap: 1rem;
+      padding: 0.85rem clamp(1rem, 4vw, 2rem);
+      border-bottom: 1px solid var(--line);
+      background: rgba(7, 11, 24, 0.72);
+      backdrop-filter: saturate(140%) blur(10px);
+      -webkit-backdrop-filter: saturate(140%) blur(10px);
     }
-    @keyframes rise {
-      0%   { transform: translateY(0) translateX(0); opacity: 0; }
-      12%  { opacity: var(--o); }
-      88%  { opacity: var(--o); }
-      100% { transform: translateY(-108vh) translateX(var(--sway)); opacity: 0; }
+    .wordmark { display: flex; align-items: center; gap: 0.55rem; text-decoration: none; }
+    .wordmark svg { width: 26px; height: 26px; border-radius: 7px; display: block; }
+    .wordmark .name { font-size: 0.95rem; font-weight: 700; letter-spacing: 0.01em; color: var(--text); }
+    .wordmark .name .slash { color: var(--accent1); }
+    .spacer { flex: 1; }
+    .signin-btn {
+      font: inherit; font-size: 0.88rem; font-weight: 600;
+      color: var(--text); background: rgba(124, 92, 255, 0.16);
+      border: 1px solid rgba(124, 92, 255, 0.45); border-radius: 10px;
+      padding: 0.5rem 1.1rem; cursor: pointer;
+      transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
     }
+    .signin-btn:hover { background: rgba(124, 92, 255, 0.28); border-color: var(--accent1); transform: translateY(-1px); }
 
-    @media (prefers-reduced-motion: reduce) {
-      .grid-layer, .star, .orb { animation: none; }
+    /* ---- hero ---- */
+    .shell { position: relative; z-index: 1; width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2rem); }
+    .hero { padding: clamp(4rem, 10vw, 7.5rem) 0 clamp(2.5rem, 6vw, 4rem); max-width: 46rem; }
+    .hero h1 {
+      margin: 0 0 1.1rem;
+      font-size: clamp(2.3rem, 6vw, 4rem);
+      font-weight: 750; letter-spacing: -0.03em; line-height: 1.04;
+      text-wrap: balance;
     }
-
-    .orb {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(90px);
-      opacity: 0.5;
-      pointer-events: none;
-      z-index: 0;
+    .hero h1 .teal { color: var(--teal); }
+    .hero h1 .gold { color: var(--gold-soft); }
+    .hero .lead {
+      margin: 0 0 2rem; color: var(--body);
+      font-size: clamp(1rem, 1.6vw, 1.15rem); line-height: 1.65; max-width: 54ch;
+      text-wrap: pretty;
     }
-    .orb-1 {
-      width: 480px; height: 480px;
-      background: #3b2d8f;
-      top: -140px; left: -120px;
-      animation: drift1 18s ease-in-out infinite alternate;
-    }
-    .orb-2 {
-      width: 420px; height: 420px;
-      background: #123f70;
-      bottom: -160px; right: -100px;
-      animation: drift2 22s ease-in-out infinite alternate;
-    }
-    .orb-3 {
-      width: 300px; height: 300px;
-      background: #0f4f4a;
-      top: 55%; left: 12%;
-      animation: drift3 26s ease-in-out infinite alternate;
-    }
-    @keyframes drift1 { to { transform: translate(120px, 90px) scale(1.15); } }
-    @keyframes drift2 { to { transform: translate(-100px, -70px) scale(1.1); } }
-    @keyframes drift3 { to { transform: translate(90px, -110px) scale(0.9); } }
-
-    /* ---- card ---- */
-    .card {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 25rem;
-      background: var(--card);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 2.5rem 2.25rem 2.25rem;
-      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
-      animation: card-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-    }
-    @keyframes card-in {
-      from { opacity: 0; transform: translateY(28px) scale(0.97); }
-      to   { opacity: 1; transform: none; }
-    }
-    .card.shake { animation: shake 0.45s ease; }
-    @keyframes shake {
-      20% { transform: translateX(-9px); }
-      40% { transform: translateX(8px); }
-      60% { transform: translateX(-5px); }
-      80% { transform: translateX(3px); }
-    }
-
-    .brand-row {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      margin-bottom: 0.9rem;
-    }
-    .logo {
-      width: 42px;
-      height: 42px;
-      border-radius: 11px;
-      box-shadow: 0 6px 18px rgba(88, 111, 255, 0.35);
-    }
-    .brand {
-      margin: 0;
-      font-size: 1.55rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--text);
-    }
-    .sub { margin: 0 0 1.75rem; color: var(--muted); font-size: 0.925rem; }
-
-    /* ---- tabs with sliding pill ---- */
-    .tabs {
-      position: relative;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      background: rgba(9, 13, 28, 0.8);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 4px;
-      margin-bottom: 1.6rem;
-    }
-    .tabs .pill {
-      position: absolute;
-      top: 4px; bottom: 4px; left: 4px;
-      width: calc(50% - 4px);
-      border-radius: 11px;
-      background: linear-gradient(135deg, rgba(124, 92, 255, 0.35), rgba(55, 165, 255, 0.35));
-      border: 1px solid rgba(124, 92, 255, 0.5);
-      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    .tabs.signup .pill { transform: translateX(100%); }
-    .tabs button {
-      position: relative;
-      z-index: 1;
-      border: 0;
-      background: transparent;
-      color: var(--muted);
-      font: inherit;
-      font-weight: 600;
-      font-size: 0.925rem;
-      padding: 0.6rem;
-      cursor: pointer;
-      transition: color 0.25s ease;
-    }
-    .tabs button.active { color: var(--text); }
-
-    /* ---- sliding panels ---- */
-    .panels { position: relative; overflow: hidden; transition: height 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
-    .panel {
-      position: absolute;
-      inset: 0 auto auto 0;
-      width: 100%;
-      transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    .panel.off-left  { opacity: 0; transform: translateX(-36px); pointer-events: none; }
-    .panel.off-right { opacity: 0; transform: translateX(36px);  pointer-events: none; }
-
-    /* ---- floating-label inputs ---- */
-    .field { position: relative; margin-bottom: 1.05rem; }
-    .field input {
-      width: 100%;
-      padding: 1.15rem 0.95rem 0.5rem;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: rgba(9, 13, 28, 0.65);
-      color: var(--text);
-      font: inherit;
-      outline: none;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-    .field input:focus {
-      border-color: var(--accent2);
-      box-shadow: 0 0 0 3px rgba(55, 165, 255, 0.15);
-    }
-    .field label {
-      position: absolute;
-      left: 0.95rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--muted);
-      font-size: 0.95rem;
-      pointer-events: none;
-      transition: all 0.18s ease;
-    }
-    .field input:focus + label,
-    .field input:not(:placeholder-shown) + label {
-      top: 0.62rem;
-      transform: none;
-      font-size: 0.68rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--accent2);
-    }
-
-    /* ---- submit button ---- */
-    .submit {
-      position: relative;
-      width: 100%;
-      padding: 0.85rem;
-      border: 0;
-      border-radius: 12px;
+    .hero-cta { display: flex; gap: 0.8rem; flex-wrap: wrap; align-items: center; }
+    .cta {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font: inherit; font-size: 0.95rem; font-weight: 700;
+      padding: 0.8rem 1.5rem; border-radius: 12px; cursor: pointer;
+      text-decoration: none; border: 0;
       background: linear-gradient(135deg, var(--accent1), var(--accent2));
-      color: #fff;
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
-      box-shadow: 0 8px 24px rgba(88, 111, 255, 0.35);
-      margin-top: 0.2rem;
+      color: #fff; box-shadow: 0 10px 30px rgba(88, 111, 255, 0.35);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
     }
-    .submit:hover { transform: translateY(-2px); filter: brightness(1.08); box-shadow: 0 12px 32px rgba(88, 111, 255, 0.45); }
+    .cta:hover { transform: translateY(-2px); filter: brightness(1.08); box-shadow: 0 14px 38px rgba(88, 111, 255, 0.45); }
+    .cta-ghost {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font: inherit; font-size: 0.95rem; font-weight: 600;
+      padding: 0.8rem 1.3rem; border-radius: 12px; cursor: pointer;
+      text-decoration: none; color: var(--body);
+      background: transparent; border: 1px solid var(--line-strong);
+      transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+    .cta-ghost:hover { color: var(--text); border-color: var(--accent2); background: rgba(55, 165, 255, 0.08); }
+
+    /* entrance choreography */
+    .hero > * { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+    .ready .hero > * { opacity: 1; transform: none; }
+    .ready .hero > *:nth-child(2) { transition-delay: 0.08s; }
+    .ready .hero > *:nth-child(3) { transition-delay: 0.16s; }
+
+    /* ---- products (equal duo) ---- */
+    .duo-head { display: flex; align-items: baseline; gap: 0.9rem; margin: 0 0 1.2rem; }
+    .duo-head h2 { margin: 0; font-size: clamp(1.3rem, 2.6vw, 1.7rem); font-weight: 700; letter-spacing: -0.02em; }
+    .duo-head .rule { flex: 1; height: 1px; background: var(--line); }
+    .duo {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+      gap: 1.1rem; padding-bottom: clamp(3rem, 7vw, 5rem);
+    }
+    .product {
+      position: relative; display: flex; flex-direction: column;
+      padding: clamp(1.4rem, 2.5vw, 1.9rem); border-radius: 18px;
+      background: var(--surface); border: 1px solid var(--line);
+      text-decoration: none; color: inherit; overflow: hidden; min-height: 24rem;
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease, background 0.2s ease;
+    }
+    .product:hover { transform: translateY(-4px); }
+    .product:focus-visible { outline: 2px solid var(--accent2); outline-offset: 3px; }
+    .product.biz { background: radial-gradient(140% 90% at 100% 0%, rgba(45, 212, 191, 0.13), transparent 42%), var(--surface); border-color: rgba(45, 212, 191, 0.28); }
+    .product.biz:hover { border-color: rgba(45, 212, 191, 0.6); }
+    .product.cap { background: radial-gradient(140% 90% at 100% 0%, rgba(201, 168, 76, 0.13), transparent 42%), var(--surface); border-color: rgba(201, 168, 76, 0.28); }
+    .product.cap:hover { border-color: rgba(201, 168, 76, 0.6); }
+
+    .prod-top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.3rem; }
+    .prod-logo { width: 56px; height: 56px; border-radius: 14px; display: block; box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45); }
+    .pill {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+      padding: 0.28rem 0.65rem; border-radius: 999px;
+    }
+    .pill .dot { width: 6px; height: 6px; border-radius: 50%; }
+    .pill.live { color: #a7f3d6; border: 1px solid rgba(52, 211, 153, 0.35); background: rgba(52, 211, 153, 0.09); }
+    .pill.live .dot { background: var(--ok); box-shadow: 0 0 6px var(--ok); }
+    .pill.early { color: var(--gold-soft); border: 1px solid rgba(201, 168, 76, 0.4); background: rgba(201, 168, 76, 0.09); }
+    .pill.early .dot { background: var(--gold); box-shadow: 0 0 6px var(--gold); }
+
+    .prod-name { margin: 0 0 0.4rem; font-size: 1.45rem; font-weight: 750; letter-spacing: -0.02em; }
+    .prod-name .fam { color: var(--muted); font-weight: 500; }
+    .prod-tag { margin: 0 0 1.2rem; color: var(--body); font-size: 0.95rem; line-height: 1.6; max-width: 40ch; text-wrap: pretty; }
+
+    .feat { margin: 0 0 0.5rem; padding: 0; list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 0.15rem 1.2rem; }
+    .feat li { display: flex; align-items: center; gap: 0.5rem; padding: 0.32rem 0; font-size: 0.87rem; color: var(--body); }
+    .feat li svg { flex-shrink: 0; }
+    .cap-note {
+      margin: 0 0 0.5rem; padding: 0.9rem 1rem; border-radius: 12px;
+      background: rgba(201, 168, 76, 0.07); border: 1px solid rgba(201, 168, 76, 0.2);
+      color: var(--body); font-size: 0.87rem; line-height: 1.6;
+    }
+    .cap-note b { color: var(--gold-soft); }
+    .prod-foot { margin-top: auto; padding-top: 1.2rem; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem; }
+    .biz .prod-foot { color: var(--teal-soft); }
+    .cap .prod-foot { color: var(--gold-soft); }
+    .prod-foot .arr { transition: transform 0.18s ease; }
+    .product:hover .prod-foot .arr { transform: translateX(4px); }
+
+    /* one-account strip */
+    .one {
+      display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+      padding: 1.2rem 1.4rem; margin-bottom: clamp(3rem, 7vw, 5rem);
+      border: 1px solid var(--line); border-radius: 16px;
+      background: rgba(16, 22, 43, 0.55);
+    }
+    .one .keys { display: flex; }
+    .one .key {
+      width: 34px; height: 34px; border-radius: 10px; border: 2px solid var(--bg);
+      display: block; margin-left: -8px;
+    }
+    .one .key:first-child { margin-left: 0; }
+    .one p { margin: 0; color: var(--body); font-size: 0.92rem; line-height: 1.55; flex: 1; min-width: 16rem; }
+    .one p b { color: var(--text); }
+
+    /* ---- footer ---- */
+    .footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--line);
+      padding: 1.4rem clamp(1rem, 4vw, 2rem) 1.8rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+      max-width: var(--maxw); margin: 0 auto;
+      font-size: 0.8rem; color: var(--muted);
+    }
+    .footer .slash { color: var(--accent1); }
+
+    /* ---- auth dialog (the original card, now summoned on demand) ---- */
+    dialog.auth {
+      z-index: var(--z-dialog);
+      width: min(25rem, calc(100vw - 2rem));
+      background: rgba(19, 26, 48, 0.85);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--line-strong); border-radius: 24px;
+      padding: 2.4rem 2.2rem 2.1rem; color: var(--text);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+    }
+    dialog.auth::backdrop { background: rgba(4, 6, 14, 0.72); backdrop-filter: blur(3px); }
+    dialog.auth[open] { animation: card-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    @keyframes card-in { from { opacity: 0; transform: translateY(24px) scale(0.97); } to { opacity: 1; transform: none; } }
+    dialog.auth.shake { animation: shake 0.45s ease; }
+    @keyframes shake { 20% { transform: translateX(-9px); } 40% { transform: translateX(8px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(3px); } }
+    .auth-close {
+      position: absolute; top: 0.9rem; right: 0.9rem;
+      width: 32px; height: 32px; border-radius: 9px; border: 1px solid var(--line);
+      background: transparent; color: var(--muted); font-size: 1rem; cursor: pointer;
+      display: grid; place-items: center; transition: color 0.15s ease, border-color 0.15s ease;
+    }
+    .auth-close:hover { color: var(--text); border-color: var(--line-strong); }
+    .brand-row { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.9rem; }
+    .brand-row svg { width: 40px; height: 40px; border-radius: 11px; box-shadow: 0 6px 18px rgba(88, 111, 255, 0.35); }
+    .brand { margin: 0; font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; }
+    .sub { margin: 0 0 1.6rem; color: var(--muted); font-size: 0.9rem; }
+    .tabs { position: relative; display: grid; grid-template-columns: 1fr 1fr; background: rgba(9, 13, 28, 0.8); border: 1px solid var(--line-strong); border-radius: 14px; padding: 4px; margin-bottom: 1.5rem; }
+    .tabs .tpill { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); border-radius: 11px; background: linear-gradient(135deg, rgba(124, 92, 255, 0.35), rgba(55, 165, 255, 0.35)); border: 1px solid rgba(124, 92, 255, 0.5); transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
+    .tabs.signup .tpill { transform: translateX(100%); }
+    .tabs button { position: relative; z-index: 1; border: 0; background: transparent; color: var(--muted); font: inherit; font-weight: 600; font-size: 0.9rem; padding: 0.55rem; cursor: pointer; transition: color 0.25s ease; }
+    .tabs button.active { color: var(--text); }
+    .panels { position: relative; overflow: hidden; }
+    .panel { position: absolute; inset: 0 auto auto 0; width: 100%; transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+    .panel.off-left { opacity: 0; transform: translateX(-36px); pointer-events: none; }
+    .panel.off-right { opacity: 0; transform: translateX(36px); pointer-events: none; }
+    .field { position: relative; margin-bottom: 1rem; }
+    .field input { width: 100%; padding: 1.1rem 0.95rem 0.5rem; border: 1px solid var(--line-strong); border-radius: 12px; background: rgba(9, 13, 28, 0.65); color: var(--text); font: inherit; outline: none; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+    .field input:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px rgba(55, 165, 255, 0.15); }
+    .field label { position: absolute; left: 0.95rem; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 0.92rem; pointer-events: none; transition: all 0.18s ease; }
+    .field input:focus + label,
+    .field input:not(:placeholder-shown) + label { top: 0.58rem; transform: none; font-size: 0.66rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent2); }
+    .submit { position: relative; width: 100%; padding: 0.82rem; border: 0; border-radius: 12px; background: linear-gradient(135deg, var(--accent1), var(--accent2)); color: #fff; font: inherit; font-weight: 700; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease; box-shadow: 0 8px 24px rgba(88, 111, 255, 0.35); margin-top: 0.2rem; }
+    .submit:hover { transform: translateY(-2px); filter: brightness(1.08); }
     .submit:active { transform: translateY(0); }
     .submit.loading { color: transparent; pointer-events: none; }
-    .submit.loading::after {
-      content: "";
-      position: absolute;
-      top: 50%; left: 50%;
-      width: 20px; height: 20px;
-      margin: -10px 0 0 -10px;
-      border: 2.5px solid rgba(255, 255, 255, 0.35);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-    }
+    .submit.loading::after { content: ""; position: absolute; top: 50%; left: 50%; width: 20px; height: 20px; margin: -10px 0 0 -10px; border: 2.5px solid rgba(255, 255, 255, 0.35); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    .msg { min-height: 1.3rem; margin: 0.9rem 0 0; font-size: 0.875rem; text-align: center; color: var(--muted); transition: color 0.2s ease; }
+    .msg { min-height: 1.3rem; margin: 0.85rem 0 0; font-size: 0.86rem; text-align: center; color: var(--muted); transition: color 0.2s ease; }
     .msg.error { color: var(--error); }
     .msg.ok { color: var(--ok); }
-
-    /* ---- success overlay ---- */
-    .overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.8rem;
-      border-radius: 24px;
-      background: rgba(13, 18, 36, 0.92);
-      backdrop-filter: blur(8px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.35s ease;
-    }
+    .overlay { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.8rem; border-radius: 24px; background: rgba(13, 18, 36, 0.94); opacity: 0; pointer-events: none; transition: opacity 0.35s ease; }
     .overlay.show { opacity: 1; pointer-events: auto; }
-    .overlay svg { width: 74px; height: 74px; }
+    .overlay svg { width: 70px; height: 70px; }
     .overlay .ring { stroke: var(--ok); stroke-width: 2.5; fill: none; stroke-dasharray: 166; stroke-dashoffset: 166; }
     .overlay .tick { stroke: var(--ok); stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 48; stroke-dashoffset: 48; }
     .overlay.show .ring { animation: draw 0.6s ease forwards; }
     .overlay.show .tick { animation: draw 0.4s ease 0.45s forwards; }
     @keyframes draw { to { stroke-dashoffset: 0; } }
-    .overlay p { margin: 0; color: var(--text); font-weight: 600; }
+    .overlay p { margin: 0; color: var(--text); font-weight: 600; text-align: center; padding: 0 1rem; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .hero > *, .product, .prod-foot .arr { transition: none; opacity: 1; transform: none; }
+      dialog.auth[open] { animation: none; }
+    }
   </style>
 </head>
 <body>
-  <div class="px" data-depth="10"><div class="grid-layer"></div></div>
-  <div class="px" data-depth="22">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-  </div>
-  <div class="px" data-depth="42"><div class="stars" id="stars"></div></div>
+  <div class="px"><div class="grid-layer"></div></div>
+  <div class="ambient" aria-hidden="true"></div>
 
-  <main class="card" id="card">
-    <div class="brand-row">
-      <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
-        <defs>
-          <linearGradient id="logo-g" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#7c5cff"/>
-            <stop offset="1" stop-color="#37a5ff"/>
-          </linearGradient>
-        </defs>
-        <rect width="64" height="64" rx="15" fill="url(#logo-g)"/>
+  <header class="topbar">
+    <a class="wordmark" href="/">
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c5cff"/><stop offset="1" stop-color="#37a5ff"/></linearGradient></defs>
+        <rect width="64" height="64" rx="15" fill="url(#lg1)"/>
         <path d="M27 20l-7 24" stroke="#fff" stroke-width="5.5" stroke-linecap="round"/>
         <path d="M44 20l-7 24" stroke="#fff" stroke-width="5.5" stroke-linecap="round" opacity="0.72"/>
       </svg>
-      <h1 class="brand">parals</h1>
+      <span class="name">parals<span class="slash">//</span></span>
+    </a>
+    <span class="spacer"></span>
+    <button class="signin-btn" id="open-auth" type="button">Sign in</button>
+  </header>
+
+  <div class="shell" id="stage">
+    <section class="hero">
+      <h1>Serious software for <span class="teal">running</span> and <span class="gold">counting</span> your business.</h1>
+      <p class="lead">The Serenity family: a complete hotel back office and dead-simple bookkeeping for small companies. Built in Greece, for how business actually works here — one account opens everything.</p>
+      <div class="hero-cta">
+        <button class="cta" id="hero-auth" type="button">Get started</button>
+        <a class="cta-ghost" href="#programs">See the programs ↓</a>
+      </div>
+    </section>
+
+    <div class="duo-head" id="programs">
+      <h2>Two programs, one family</h2>
+      <span class="rule"></span>
     </div>
-    <p class="sub">Sign in to your account, or create one in seconds.</p>
+
+    <div class="duo">
+      <a class="product biz" href="https://bithm-production.up.railway.app/workspaces" target="_blank" rel="noopener" aria-label="Open Serenity Business">
+        <div class="prod-top">
+          <img class="prod-logo" src="/img/serenity-business.png" alt="" width="56" height="56">
+          <span class="pill live"><span class="dot"></span> Live</span>
+        </div>
+        <h3 class="prod-name"><span class="fam">Serenity</span> Business</h3>
+        <p class="prod-tag">The full back office for hotels and serious operations — everything your team touches daily, in one place, synced live.</p>
+        <ul class="feat" aria-label="Serenity Business features">
+          <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Suppliers &amp; invoices</li>
+          <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Staff &amp; schedules</li>
+          <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>myDATA sync (ΑΑΔΕ)</li>
+          <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Expenses &amp; VAT</li>
+          <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Bills due &amp; payments</li>
+          <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Multi-workspace</li>
+        </ul>
+        <span class="prod-foot">Open Serenity Business <span class="arr">→</span></span>
+      </a>
+
+      <a class="product cap" href="https://capture.parals.net" target="_blank" rel="noopener" aria-label="Open Serenity Capture">
+        <div class="prod-top">
+          <img class="prod-logo" src="/img/serenity-capture.png" alt="" width="56" height="56">
+          <span class="pill early"><span class="dot"></span> Early access</span>
+        </div>
+        <h3 class="prod-name"><span class="fam">Serenity</span> Capture</h3>
+        <p class="prod-tag">Money in, money out. Bookkeeping as fast as a notebook, for small companies that don't live in the invoice world.</p>
+        <p class="cap-note"><b>Now shaping up.</b> The fastest way to keep honest books — three taps per entry, totals that always add up. Feature list lands here soon.</p>
+        <span class="prod-foot">Preview Capture <span class="arr">→</span></span>
+      </a>
+    </div>
+
+    <div class="one">
+      <span class="keys">
+        <img class="key" src="/img/serenity-business.png" alt="">
+        <img class="key" src="/img/serenity-capture.png" alt="">
+      </span>
+      <p><b>One account for everything Serenity.</b> Sign up once on parals.net — after approval, the same login opens Business and Capture. No second passwords, ever.</p>
+      <button class="cta-ghost" id="one-auth" type="button">Request access</button>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <span>parals<span class="slash">//</span> — the Serenity family</span>
+    <span>Business · Capture</span>
+  </footer>
+
+  <!-- auth dialog -->
+  <dialog class="auth" id="auth">
+    <button class="auth-close" id="auth-close" type="button" aria-label="Close">✕</button>
+    <div class="brand-row">
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <defs><linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c5cff"/><stop offset="1" stop-color="#37a5ff"/></linearGradient></defs>
+        <rect width="64" height="64" rx="15" fill="url(#lg2)"/>
+        <path d="M27 20l-7 24" stroke="#fff" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M44 20l-7 24" stroke="#fff" stroke-width="5.5" stroke-linecap="round" opacity="0.72"/>
+      </svg>
+      <h2 class="brand">parals</h2>
+    </div>
+    <p class="sub">One account for the whole Serenity family.</p>
 
     <div class="tabs" id="tabs">
-      <div class="pill"></div>
+      <div class="tpill"></div>
       <button type="button" id="tab-in" class="active">Sign in</button>
       <button type="button" id="tab-up">Register</button>
     </div>
@@ -377,59 +412,31 @@
       </svg>
       <p id="overlay-text">Welcome!</p>
     </div>
-  </main>
+  </dialog>
 
   <script>
     const $ = (id) => document.getElementById(id);
 
-    // Floating background particles
-    (() => {
-      const box = $("stars");
-      for (let i = 0; i < 70; i++) {
-        const s = document.createElement("span");
-        const size = 1.5 + Math.random() * 2.2;
-        const dur = 14 + Math.random() * 22;
-        s.className = "star";
-        s.style.left = Math.random() * 100 + "%";
-        s.style.width = s.style.height = size + "px";
-        s.style.setProperty("--o", (0.12 + Math.random() * 0.35).toFixed(2));
-        s.style.setProperty("--sway", (Math.random() * 120 - 60).toFixed(0) + "px");
-        s.style.animationDuration = dur + "s";
-        s.style.animationDelay = -(Math.random() * dur) + "s";
-        box.appendChild(s);
-      }
-    })();
+    // Hero entrance
+    requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.add("ready")));
+    document.body.classList.add("ready"); // ensure visible even if rAF stalls
 
-    // Mouse parallax: each layer drifts opposite the cursor by its depth
-    (() => {
-      if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      const layers = [...document.querySelectorAll(".px")].map((el) => ({
-        el, depth: parseFloat(el.dataset.depth) || 0,
-      }));
-      let tx = 0, ty = 0, cx = 0, cy = 0;
-      addEventListener("mousemove", (e) => {
-        tx = (e.clientX / innerWidth) * 2 - 1;
-        ty = (e.clientY / innerHeight) * 2 - 1;
-      });
-      (function tick() {
-        cx += (tx - cx) * 0.06;
-        cy += (ty - cy) * 0.06;
-        for (const { el, depth } of layers) {
-          el.style.transform = `translate3d(${(-cx * depth).toFixed(1)}px, ${(-cy * depth).toFixed(1)}px, 0)`;
-        }
-        requestAnimationFrame(tick);
-      })();
-    })();
+    // ---- auth dialog ----
+    const auth = $("auth");
+    function openAuth(mode) {
+      if (mode) setMode(mode);
+      if (!auth.open) auth.showModal();
+    }
+    $("open-auth").onclick = () => openAuth("in");
+    $("hero-auth").onclick = () => openAuth("in");
+    $("one-auth").onclick = () => openAuth("up");
+    $("auth-close").onclick = () => auth.close();
+    auth.addEventListener("click", (e) => { if (e.target === auth) auth.close(); });
 
     const panels = $("panels");
     let mode = "in";
-
-    function layout() {
-      panels.style.height = $("panel-" + mode).offsetHeight + "px";
-    }
-
+    function layout() { panels.style.height = $("panel-" + mode).offsetHeight + "px"; }
     function setMode(m) {
-      if (m === mode) return;
       mode = m;
       $("tabs").classList.toggle("signup", m === "up");
       $("tab-in").classList.toggle("active", m === "in");
@@ -449,22 +456,17 @@
       el.textContent = text;
       el.className = "msg" + (cls ? " " + cls : "");
     }
-
     function fail(message) {
       setMsg(message, "error");
-      const card = $("card");
-      card.classList.remove("shake");
-      void card.offsetWidth; // restart animation
-      card.classList.add("shake");
+      auth.classList.remove("shake");
+      void auth.offsetWidth;
+      auth.classList.add("shake");
     }
-
     function succeed(username, created) {
       $("overlay-text").textContent = created ? `Account created — welcome, ${username}!` : `Welcome back, ${username}!`;
       $("overlay").classList.add("show");
-      setTimeout(() => location.href = "/welcome", 1300);
+      setTimeout(() => location.href = "/welcome", 1200);
     }
-
-    // Registration doesn't sign you in — it's queued for admin approval.
     function pendingSubmitted() {
       $("overlay-text").textContent = "Request received — you'll be able to sign in once an admin approves it.";
       $("overlay").classList.add("show");
@@ -474,7 +476,6 @@
         setMsg("Registration request sent — awaiting approval.", "ok");
       }, 2600);
     }
-
     async function submit(url, payload, btn) {
       btn.classList.add("loading");
       try {
@@ -493,14 +494,12 @@
         btn.classList.remove("loading");
       }
     }
-
     $("panel-in").onsubmit = (e) => {
       e.preventDefault();
       const user = $("in-user").value.trim(), pass = $("in-pass").value;
       if (!user || !pass) return fail("Fill in both fields");
       submit("/api/login", { username: user, password: pass }, e.target.querySelector(".submit"));
     };
-
     $("panel-up").onsubmit = (e) => {
       e.preventDefault();
       const user = $("up-user").value.trim(), email = $("up-email").value.trim();
@@ -512,8 +511,22 @@
       submit("/api/register", { username: user, email, password: pass }, e.target.querySelector(".submit"));
     };
 
-    // Already signed in? Go straight to the welcome page.
-    fetch("/api/me").then((res) => { if (res.ok) location.replace("/welcome"); }).catch(() => {});
+    // Already signed in? The landing still shows, but the CTA becomes the hub.
+    fetch("/api/me").then(async (res) => {
+      if (!res.ok) return;
+      const me = await res.json().catch(() => null);
+      if (!me || !me.username) return;
+      const go = () => location.href = "/welcome";
+      const btn = $("open-auth");
+      btn.textContent = "Open your hub →";
+      btn.onclick = go;
+      const hero = $("hero-auth");
+      hero.textContent = `Continue as ${me.username} →`;
+      hero.onclick = go;
+      const one = $("one-auth");
+      one.textContent = "Open your hub →";
+      one.onclick = go;
+    }).catch(() => {});
   </script>
 </body>
 </html>

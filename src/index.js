@@ -153,13 +153,21 @@ async function logout(request, env) {
   if (token) {
     await env.DB.prepare("DELETE FROM sessions WHERE token = ?").bind(token).run();
   }
-  return json({ ok: true }, 200, clearCookieHeader());
+  return withClearedCookies(json({ ok: true }));
 }
 
 async function me(request, env) {
   const user = await currentUser(request, env);
-  if (!user) return json({ error: "Not signed in" }, 401, clearCookieHeader());
+  if (!user) return withClearedCookies(json({ error: "Not signed in" }, 401));
   return json({ username: user.username, created_at: user.created_at, role: user.role });
+}
+
+// Clear both cookie scopes: the new domain-wide one and the legacy host-only
+// one from before the family SSO, so logout always sticks.
+function withClearedCookies(res) {
+  res.headers.append("Set-Cookie", "session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0; Domain=.parals.net");
+  res.headers.append("Set-Cookie", "session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0");
+  return res;
 }
 
 // Resolve the signed-in user from the session cookie, or null if none/expired.
@@ -405,7 +413,9 @@ async function createSession(env, userId, payload) {
     "INSERT INTO sessions (token, user_id, expires_at) VALUES (?, ?, ?)"
   ).bind(token, userId, expiresAt).run();
 
-  const cookie = `session=${token}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${SESSION_DAYS * 24 * 60 * 60}`;
+  // Domain-wide cookie: one sign-in covers the whole Serenity family
+  // (parals.net + capture.parals.net share the sessions table).
+  const cookie = `session=${token}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${SESSION_DAYS * 24 * 60 * 60}; Domain=.parals.net`;
   return json(payload, 200, { "Set-Cookie": cookie });
 }
 
